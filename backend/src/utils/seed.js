@@ -4,7 +4,8 @@ const db = require('../../config/database');
 
 async function seed() {
   console.log('🌱  Seed startet …');
-
+await db.query('DELETE FROM wohngemeinschaften');
+await db.query('DELETE FROM bezirke');
   // Bezirke für Dortmund
   const bezirke = ['Aplerbeck','Bodelschwingh','Frohlinde','Kirchlinde','Nette','Rahm','Sölde','Sölderholz','Mitte','Nord'];
   const bIds = {};
