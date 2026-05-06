@@ -128,4 +128,4 @@ async function migrate() {
   catch(e) { console.error('Fehler:', e.message); }
   // fertig
 }
-migrate();
+module.exports = { migrate };
