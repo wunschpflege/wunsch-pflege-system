@@ -225,7 +225,7 @@ const maGetAll = async (req, res, next) => {
     if(status)        where.push(`m.status=$${params.push(status)}`);
     const w=where.join(' AND ');
     const [data,count] = await Promise.all([
-      db.query(`SELECT m.id,m.ma_nummer,m.vorname,m.nachname,m.qualifikation,m.beschaeftigung,m.stunden_woche,m.telefon,m.email,m.status,m.eintrittsdatum,b.name AS bezirk FROM mitarbeiter m LEFT JOIN bezirke b ON m.bezirk_id=b.id WHERE ${w} ORDER BY m.nachname,m.vorname LIMIT $${params.push(parseInt(limit))} OFFSET $${params.push(offset)}`,params),
+      db.query(`SELECT m.id,m.ma_nummer,m.vorname,m.nachname,m.qualifikation,m.beschaeftigung,m.stunden_woche,m.telefon1,m.email,m.status,m.eintrittsdatum,b.name AS bezirk FROM mitarbeiter m LEFT JOIN bezirke b ON m.bezirk_id=b.id WHERE ${w} ORDER BY m.nachname,m.vorname LIMIT $${params.push(parseInt(limit))} OFFSET $${params.push(offset)}`,params),
       db.query(`SELECT COUNT(*) FROM mitarbeiter m WHERE ${w}`,params.slice(0,-2)),
     ]);
     res.json({mitarbeiter:data.rows,gesamt:parseInt(count.rows[0].count),seite:parseInt(page),seiten:Math.ceil(count.rows[0].count/limit)});
@@ -234,9 +234,9 @@ const maGetAll = async (req, res, next) => {
 
 const maCreate = async (req, res, next) => {
   try {
-    const {vorname,nachname,geburtsdatum,telefon,mobil,email,qualifikation,beschaeftigung,stunden_woche,bezirk_id,eintrittsdatum,notizen} = req.body;
+    const {vorname,nachname,geburtsdatum,telefon1,mobiltelefon,email,qualifikation,beschaeftigung,stunden_woche,bezirk_id,eintrittsdatum,notizen} = req.body;
     const {rows:nr} = await db.query(`SELECT 'MA-'||LPAD((COUNT(*)+1)::TEXT,3,'0') AS n FROM mitarbeiter`);
-    const {rows} = await db.query(`INSERT INTO mitarbeiter(ma_nummer,vorname,nachname,geburtsdatum,telefon,mobil,email,qualifikation,beschaeftigung,stunden_woche,bezirk_id,eintrittsdatum,notizen) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,[nr[0].n,vorname,nachname,geburtsdatum,telefon,mobil,email,qualifikation,beschaeftigung||'vollzeit',stunden_woche||40,bezirk_id,eintrittsdatum,notizen]);
+    const {rows} = await db.query(`INSERT INTO mitarbeiter(ma_nummer,vorname,nachname,geburtsdatum,telefon1,mobiltelefon,email,qualifikation,beschaeftigung,stunden_woche,bezirk_id,eintrittsdatum,notizen) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,[nr[0].n,vorname,nachname,geburtsdatum,telefon1,mobiltelefon,email,qualifikation,beschaeftigung||'vollzeit',stunden_woche||40,bezirk_id,eintrittsdatum,notizen]);
     res.status(201).json({mitarbeiter:rows[0]});
   } catch(e) { next(e); }
 };
