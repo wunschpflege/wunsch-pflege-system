@@ -109,7 +109,7 @@ const patientenGetAll = async (req, res, next) => {
     if(nur_ambulant==='true') where.push('p.wg_id IS NULL');
     const w=where.join(' AND ');
     const [data,count] = await Promise.all([
-      db.query(`SELECT p.id,p.pat_nummer,p.vorname,p.nachname,p.geburtsdatum,DATE_PART('year',AGE(p.geburtsdatum))::INT AS alter,p.pflegegrad,p.krankenkasse,p.telefon,p.aufnahmedatum,b.name AS bezirk,wg.name AS wg FROM patienten p LEFT JOIN bezirke b ON p.bezirk_id=b.id LEFT JOIN wohngemeinschaften wg ON p.wg_id=wg.id WHERE ${w} ORDER BY p.nachname,p.vorname LIMIT $${params.push(parseInt(limit))} OFFSET $${params.push(offset)}`,params),
+      db.query(`SELECT p.id,p.pat_nummer,p.vorname,p.nachname,p.geburtsdatum,DATE_PART('year',AGE(p.geburtsdatum))::INT AS alter,p.pflegegrad,p.krankenkasse,p.telefon1,p.aufnahmedatum,b.name AS bezirk,wg.name AS wg FROM patienten p LEFT JOIN bezirke b ON p.bezirk_id=b.id LEFT JOIN wohngemeinschaften wg ON p.wg_id=wg.id WHERE ${w} ORDER BY p.nachname,p.vorname LIMIT $${params.push(parseInt(limit))} OFFSET $${params.push(offset)}`,params),
       db.query(`SELECT COUNT(*) FROM patienten p WHERE ${w}`,params.slice(0,-2)),
     ]);
     res.json({patienten:data.rows,gesamt:parseInt(count.rows[0].count),seite:parseInt(page),seiten:Math.ceil(count.rows[0].count/limit)});
@@ -135,16 +135,16 @@ const patientGetOne = async (req, res, next) => {
 
 const patientCreate = async (req, res, next) => {
   try {
-    const {vorname,nachname,geburtsdatum,strasse,plz,ort,telefon,pflegegrad,krankenkasse,versicherungsnr,bezirk_id,wg_id,diagnosen,allergien,notizen} = req.body;
+    const {vorname,nachname,geburtsdatum,strasse,plz,ort,telefon1,pflegegrad,krankenkasse,versicherungsnr,bezirk_id,wg_id,diagnosen,allergien,notizen} = req.body;
     const {rows:nr} = await db.query(`SELECT 'P-'||LPAD((COUNT(*)+1)::TEXT,4,'0') AS n FROM patienten`);
-    const {rows} = await db.query(`INSERT INTO patienten(pat_nummer,vorname,nachname,geburtsdatum,strasse,plz,ort,telefon,pflegegrad,krankenkasse,versicherungsnr,bezirk_id,wg_id,diagnosen,allergien,notizen) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *`,[nr[0].n,vorname,nachname,geburtsdatum,strasse,plz,ort,telefon,pflegegrad,krankenkasse,versicherungsnr,bezirk_id,wg_id,diagnosen||[],allergien||[],notizen]);
+    const {rows} = await db.query(`INSERT INTO patienten(pat_nummer,vorname,nachname,geburtsdatum,strasse,plz,ort,telefon1,pflegegrad,krankenkasse,versicherungsnr,bezirk_id,wg_id,diagnosen,allergien,notizen) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *`,[nr[0].n,vorname,nachname,geburtsdatum,strasse,plz,ort,telefon,pflegegrad,krankenkasse,versicherungsnr,bezirk_id,wg_id,diagnosen||[],allergien||[],notizen]);
     res.status(201).json({patient:rows[0]});
   } catch(e) { next(e); }
 };
 
 const patientUpdate = async (req, res, next) => {
   try {
-    const felder=['vorname','nachname','telefon','pflegegrad','krankenkasse','bezirk_id','wg_id','diagnosen','allergien','notizen','aktiv'];
+    const felder=['vorname','nachname','telefon1','pflegegrad','krankenkasse','bezirk_id','wg_id','diagnosen','allergien','notizen','aktiv'];
     const upd=[],params=[];
     felder.forEach(f=>{if(req.body[f]!==undefined){params.push(req.body[f]);upd.push(`${f}=$${params.length}`);}});
     if(!upd.length) return res.status(400).json({error:'Keine Felder'});
