@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wunsch-Pflege GmbH</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F7F6F3;--card:#FFFFFF;--text:#18181B;--text2:#52525B;--text3:#A1A1AA;
+  --accent:#16A34A;--accent2:#DCFCE7;--accent-t:#14532D;
+  --blue:#2563EB;--blue2:#DBEAFE;--blue-t:#1E3A8A;
+  --red:#DC2626;--red2:#FEE2E2;--red-t:#7F1D1D;
+  --warn:#D97706;--warn2:#FEF3C7;--warn-t:#78350F;
+  --purple:#7C3AED;--purple2:#EDE9FE;--purple-t:#3B0764;
+  --teal:#0D9488;--teal2:#CCFBF1;--teal-t:#134E4A;
+  --border:#E4E4E7;--border2:#D4D4D8;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.05);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --sidebar:68px;--topbar:56px;--r:8px;--r2:12px;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* ── LAYOUT ── */
+.app{display:grid;grid-template-columns:var(--sidebar) 1fr;grid-template-rows:var(--topbar) 1fr;height:100vh;overflow:hidden}
+
+/* ── LOGIN ── */
+#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px;width:380px;max-width:95vw;box-shadow:var(--shadow-md)}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.login-mark{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.login-mark svg{color:#fff}
+.login-name{font-size:16px;font-weight:600;letter-spacing:-.3px}
+.login-sub{font-size:11px;color:var(--text3)}
+.login-field{margin-bottom:14px}
+.login-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px}
+.login-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-family:var(--font);font-size:13px;color:var(--text);background:#FAFAFA;outline:none;transition:all .15s}
+.login-input:focus{border-color:var(--accent);background:var(--card);box-shadow:0 0 0 3px rgba(22,163,74,.1)}
+.login-btn{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .15s;margin-top:4px}
+.login-btn:hover{background:#15803D}
+.login-error{background:var(--red2);color:var(--red-t);padding:9px 12px;border-radius:var(--r);font-size:12px;margin-bottom:12px;display:none}
+.login-demo{font-size:11px;color:var(--text3);text-align:center;margin-top:14px}
+
+/* ── TOPBAR ── */
+.topbar{grid-column:1/-1;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100}
+.topbar-logo{display:flex;align-items:center;gap:8px;padding-right:12px;border-right:1px solid var(--border)}
+.tl-mark{width:28px;height:28px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.tl-name{font-size:13px;font-weight:600;letter-spacing:-.2px}
+.topbar-search{flex:1;max-width:400px}
+.search-input{width:100%;padding:7px 12px 7px 34px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);font-family:var(--font);font-size:13px;color:var(--text);outline:none;transition:all .15s;position:relative}
+.search-input:focus{border-color:var(--border2);background:var(--card)}
+.search-wrap{position:relative}
+.search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
+.topbar-right{display:flex;align-items:center;gap:6px;margin-left:auto}
+.tb-date{font-family:var(--mono);font-size:11px;color:var(--text3);padding:0 8px}
+.tb-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:var(--r);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all .15s;position:relative}
+.tb-btn:hover{background:var(--bg);color:var(--text)}
+.notif-dot{position:absolute;top:5px;right:5px;width:6px;height:6px;background:var(--red);border-radius:50%;border:2px solid var(--card)}
+.tb-user{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border:1px solid var(--border);border-radius:20px;cursor:pointer;transition:all .15s}
+.tb-user:hover{background:var(--bg)}
+.tb-av{width:24px;height:24px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff}
+.tb-uname{font-size:12px;font-weight:500}
+
+/* ── SIDEBAR (Icon-only) ── */
+.sidebar{background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:2px;overflow:visible}
+.nav-item{width:48px;height:48px;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:all .15s;color:var(--text3);position:relative;border:1px solid transparent}
+.nav-item:hover{background:var(--bg);color:var(--text2)}
+.nav-item.active{background:var(--accent2);color:var(--accent-t);border-color:rgba(22,163,74,.2)}
+.nav-item svg{width:18px;height:18px}
+.nav-item .nav-lbl{font-size:9px;font-weight:500;letter-spacing:.2px;text-align:center;line-height:1}
+.nav-badge{position:absolute;top:4px;right:4px;min-width:14px;height:14px;background:var(--red);color:#fff;border-radius:7px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--card)}
+.nav-sep{width:32px;height:1px;background:var(--border);margin:4px 0}
+.nav-bottom{margin-top:auto}
+
+/* ── MAIN ── */
+.main{overflow-y:auto;display:flex;flex-direction:column}
+.main::-webkit-scrollbar{width:5px}
+.main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── PAGES ── */
+.page{display:none;flex-direction:column;height:100%}
+.page.active{display:flex}
+
+/* ── SPLIT LAYOUT (Liste + Detail) ── */
+.split-layout{display:grid;grid-template-columns:300px 1fr;height:100%;overflow:hidden}
+.split-list{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.split-detail{overflow-y:auto;display:flex;flex-direction:column}
+.split-detail::-webkit-scrollbar{width:5px}
+.split-detail::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── LIST PANEL ── */
+.list-header{padding:12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.list-title{font-size:13px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.list-count{font-size:11px;color:var(--text3);font-weight:400;font-family:var(--mono)}
+.list-search{position:relative}
+.list-search input{width:100%;padding:7px 10px 7px 30px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);font-family:var(--font);font-size:12px;color:var(--text);outline:none}
+.list-search input:focus{border-color:var(--border2)}
+.list-search svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--text3);width:14px;height:14px}
+.list-items{flex:1;overflow-y:auto}
+.list-items::-webkit-scrollbar{width:4px}
+.list-items::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.list-item{padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;display:flex;align-items:center;gap:9px}
+.list-item:hover{background:var(--bg)}
+.list-item.active{background:var(--accent2);border-left:3px solid var(--accent)}
+.li-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.li-info{flex:1;min-width:0}
+.li-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-sub{font-size:11px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-badge{flex-shrink:0}
+
+/* ── DETAIL HEADER ── */
+.detail-header{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
+.detail-toprow{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.detail-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex-shrink:0}
+.detail-info{flex:1}
+.detail-name{font-size:18px;font-weight:600;letter-spacing:-.3px;line-height:1.2}
+.detail-meta{font-size:12px;color:var(--text2);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+.detail-meta-item{display:flex;align-items:center;gap:4px}
+.detail-actions{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--card);padding:0 16px;flex-shrink:0;overflow-x:auto}
+.tab-bar::-webkit-scrollbar{height:0}
+.tab{padding:10px 14px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--accent-t);border-bottom-color:var(--accent);font-weight:600}
+
+/* ── TAB CONTENT ── */
+.tab-content{display:none;padding:16px;flex-direction:column;gap:14px}
+.tab-content.active{display:flex}
+
+/* ── SECTION CARD ── */
+.sec{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.sec-header{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sec-title{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.3px;text-transform:uppercase}
+.sec-body{padding:14px}
+
+/* ── FORM GRID ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg.full{grid-column:1/-1}
+.fg.w3{grid-column:span 3}
+.lbl{font-size:11px;font-weight:500;color:var(--text2)}
+.inp,.sel,.txa{padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:12px;color:var(--text);background:var(--bg);outline:none;transition:all .15s;width:100%}
+.inp:focus,.sel:focus,.txa:focus{border-color:var(--accent);background:var(--card)}
+.inp[readonly]{background:var(--bg);color:var(--text2);cursor:default}
+.txa{resize:vertical;min-height:70px}
+.chk-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer}
+.chk-row input{width:14px;height:14px;accent-color:var(--accent);cursor:pointer}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text);transition:all .15s;font-family:var(--font);white-space:nowrap}
+.btn:hover{background:var(--bg);border-color:var(--border2)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:#15803D}
+.btn-blue{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn-blue:hover{background:#1D4ED8}
+.btn-sm{padding:4px 9px;font-size:11px}
+.btn-danger{background:var(--red2);border-color:var(--red);color:var(--red-t)}
+.btn-icon{width:28px;height:28px;padding:0;justify-content:center}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.bg-{background:var(--accent2);color:var(--accent-t)}
+.bb-{background:var(--blue2);color:var(--blue-t)}
+.bw-{background:var(--warn2);color:var(--warn-t)}
+.br-{background:var(--red2);color:var(--red-t)}
+.bp-{background:var(--purple2);color:var(--purple-t)}
+.bt-{background:var(--teal2);color:var(--teal-t)}
+.bgray-{background:var(--bg);color:var(--text2);border:1px solid var(--border)}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:6px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg)}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tbody tr{transition:background .1s;cursor:pointer}
+.tbl tbody tr:hover td{background:var(--bg)}
+.tbl tbody tr:last-child td{border-bottom:none}
+
+/* ── INLINE TABLE (für Kontakte/Ärzte/KK) ── */
+.inline-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.inline-tbl th{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;padding:5px 8px;border-bottom:1px solid var(--border);text-align:left}
+.inline-tbl td{padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text)}
+.inline-tbl tr:last-child td{border:none}
+.inline-tbl tr:hover td{background:var(--bg)}
+
+/* ── DIENSTPLAN (Monatskalender) ── */
+.dp-wrap{overflow-x:auto;flex:1}
+.dp-table{border-collapse:collapse;font-size:11px;min-width:900px;width:100%}
+.dp-table th{font-size:10px;font-weight:600;color:var(--text3);padding:5px 4px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg);position:sticky;top:0;z-index:10}
+.dp-table th.col-name{text-align:left;padding-left:10px;min-width:160px;position:sticky;left:0;z-index:20}
+.dp-table th.col-soll{min-width:60px}
+.dp-table td{padding:2px 3px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;white-space:nowrap}
+.dp-table td.col-name{text-align:left;padding-left:10px;position:sticky;left:0;background:var(--card);z-index:5;border-right:1px solid var(--border)}
+.dp-table td.col-soll{font-family:var(--mono);font-size:10px;color:var(--text2);text-align:right;padding-right:6px}
+.dp-table td.col-rest{font-family:var(--mono);font-size:10px;font-weight:600;text-align:right;padding-right:6px}
+.dp-table td.col-rest.neg{color:var(--red)}
+.dp-table td.col-rest.pos{color:var(--accent)}
+.dp-ma-name{font-weight:600;font-size:12px}
+.dp-ma-qual{font-size:10px;color:var(--text3)}
+.dp-ma-std{font-size:10px;color:var(--text2);font-family:var(--mono)}
+.dp-row-gap td{height:3px;background:var(--bg);border:none}
+.dp-group-header td{background:var(--bg);font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:6px 10px;border-top:1px solid var(--border)}
+.dp-today{background:rgba(22,163,74,.06)!important}
+.dp-weekend{background:rgba(0,0,0,.02)}
+.dp-chip{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:20px;border-radius:4px;font-size:10px;font-weight:700;padding:0 4px;cursor:pointer;transition:all .1s}
+.dp-chip:hover{opacity:.8}
+.dp-chip.f,.dp-chip.f1,.dp-chip.f12,.dp-chip.f2{background:var(--blue2);color:var(--blue-t)}
+.dp-chip.s,.dp-chip.s1,.dp-chip.s2,.dp-chip.s3,.dp-chip.s4{background:var(--accent2);color:var(--accent-t)}
+.dp-chip.n,.dp-chip.n1{background:var(--purple2);color:var(--purple-t)}
+.dp-chip.k,.dp-chip.k1{background:var(--teal2);color:var(--teal-t)}
+.dp-chip.x{background:var(--red2);color:var(--red-t)}
+.dp-chip.u{background:var(--warn2);color:var(--warn-t)}
+.dp-chip.empty{background:transparent;color:var(--text3);font-size:9px}
+.dp-besetzung-row td{padding:3px 3px;background:var(--bg);border-top:2px solid var(--border)}
+.dp-besetzung-lbl{font-size:10px;font-weight:600;color:var(--text2);text-align:left;padding-left:10px!important}
+.dp-besetzung-num{font-size:11px;font-weight:700;font-family:var(--mono)}
+.dp-besetzung-f{color:var(--blue)}
+.dp-besetzung-s{color:var(--accent)}
+.dp-besetzung-n{color:var(--purple)}
+
+/* ── ABRECHNUNG ── */
+.abr-auftraege{margin-bottom:16px}
+.abr-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r);margin-bottom:6px;background:var(--card);cursor:pointer;transition:all .15s}
+.abr-row:hover{border-color:var(--border2)}
+.abr-row input[type=checkbox]{accent-color:var(--accent)}
+.abr-sgb{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px}
+.abr-rech-row{display:grid;grid-template-columns:24px auto 1fr auto auto auto auto auto;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--border);font-size:12px}
+.abr-rech-row:last-child{border:none}
+.abr-betrag{font-weight:700;font-family:var(--mono);text-align:right}
+
+/* ── STATISTIK ── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;border-top:3px solid}
+.stat-card.ac{border-top-color:var(--accent)}.stat-card.bl{border-top-color:var(--blue)}.stat-card.wn{border-top-color:var(--warn)}.stat-card.rd{border-top-color:var(--red)}.stat-card.pr{border-top-color:var(--purple)}.stat-card.tl{border-top-color:var(--teal)}
+.stat-lbl{font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.stat-val{font-size:24px;font-weight:700;letter-spacing:-.5px;line-height:1}
+.stat-delta{font-size:11px;margin-top:4px;font-family:var(--mono);color:var(--accent)}
+.stat-delta.down{color:var(--red)}.stat-delta.warn{color:var(--warn)}
+
+/* ── PAGINATION ── */
+.pagi{display:flex;align-items:center;gap:4px;justify-content:flex-end;padding:8px 12px;border-top:1px solid var(--border)}
+.pg-btn{min-width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:var(--card);cursor:pointer;font-size:11px;font-weight:500;transition:all .15s;padding:0 6px;display:flex;align-items:center;justify-content:center}
+.pg-btn:hover{background:var(--bg)}
+.pg-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.pg-info{font-size:11px;color:var(--text3);font-family:var(--mono);padding:0 4px}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--card);border-radius:14px;width:540px;max-width:95vw;max-height:88vh;overflow-y:auto;padding:22px;transform:translateY(10px);transition:transform .2s;box-shadow:var(--shadow-md)}
+.modal.lg{width:680px}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-title{font-size:15px;font-weight:600;letter-spacing:-.2px}
+.modal-close{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:14px;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal-close:hover{background:var(--bg)}
+.modal-footer{display:flex;justify-content:flex-end;gap:6px;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--text);color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:500;z-index:9999;transform:translateY(50px);opacity:0;transition:all .25s;pointer-events:none;max-width:320px;box-shadow:var(--shadow-md)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.green{background:var(--accent)}.toast.red{background:var(--red)}.toast.warn{background:var(--warn)}
+
+/* ── SPINNER ── */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:32px;color:var(--text2);font-size:12px}
+.empty{text-align:center;padding:32px;color:var(--text3);font-size:12px}
+
+/* ── ZEITERFASSUNG ── */
+.ze-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.ze-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px}
+.ze-name{font-weight:600;font-size:13px}
+.ze-qual{font-size:11px;color:var(--text3)}
+.ze-bar{height:4px;background:var(--bg);border-radius:2px;overflow:hidden;margin:8px 0 4px}
+.ze-fill{height:100%;background:var(--accent);border-radius:2px}
+.ze-fill.warn{background:var(--warn)}.ze-fill.red{background:var(--red)}
+
+/* ── PROG ── */
+.prog-row{margin-bottom:10px}
+.prog-row:last-child{margin-bottom:0}
+.prog-meta{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;color:var(--text2)}
+.prog-bar{height:5px;background:var(--bg);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
+.pf-warn{background:var(--warn)}.pf-red{background:var(--red)}.pf-blue{background:var(--blue)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  :root{--sidebar:0px}
+  .sidebar{display:none}
+  .split-layout{grid-template-columns:1fr}
+  .split-list{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-mark">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div><div class="login-name">Wunsch-Pflege GmbH</div><div class="login-sub">Ambulanter Pflegedienst · Dortmund</div></div>
+    </div>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-field"><label class="login-label">E-Mail</label><input class="login-input" id="loginEmail" type="email" placeholder="ihre@email.de" autocomplete="email"></div>
+    <div class="login-field"><label class="login-label">Passwort</label><input class="login-input" id="loginPw" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">Anmelden</button>
+    <div class="login-demo">Demo: admin@wunsch-pflege.de / Admin1234!</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="appShell" style="display:none">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <div class="tl-mark">
+        <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div><div class="tl-name">Wunsch-Pflege</div></div>
+    </div>
+    <div class="topbar-search">
+      <div class="search-wrap">
+        <svg class="search-ico" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" id="gSearch" placeholder="Klient, Mitarbeiter, Tour suchen …" oninput="doSearch(this.value)">
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-date" id="topDate"></div>
+      <button class="tb-btn" onclick="showToast('3 neue Meldungen','warn')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </button>
+      <div class="tb-user" id="userChip">
+        <div class="tb-av" id="userAv">?</div>
+        <div class="tb-uname" id="userName">–</div>
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="logout()">Abmelden</button>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="nav-item active" onclick="showPage('dashboard',this)" id="nav-dashboard" title="Dashboard">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span class="nav-lbl">Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="showPage('klienten',this)" id="nav-klienten" title="Klienten">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="nav-lbl">Klienten</span>
+      <span class="nav-badge" id="badge-klienten">–</span>
+    </div>
+    <div class="nav-item" onclick="showPage('mitarbeiter',this)" id="nav-mitarbeiter" title="Mitarbeiter">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="nav-lbl">Mitarbeiter</span>
+    </div>
+    <div class="nav-sep"></div>
+    <div class="nav-item" onclick="showPage('touren',this)" id="nav-touren" title="Tourenplanung">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span class="nav-lbl">Touren</span>
+    </div>
+    <div class="nav-item" onclick="showPage('dienstplan',this)" id="nav-dienstplan" title="Dienstplan">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="nav-lbl">Dienstplan</span>
+    </div>
+    <div class="nav-item" onclick="showPage('zeiterfassung',this)" id="nav-zeiterfassung" title="Zeiterfassung">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span class="nav-lbl">Zeiten</span>
+    </div>
+    <div class="nav-sep"></div>
+    <div class="nav-item" onclick="showPage('dokumentation',this)" id="nav-dokumentation" title="Dokumentation">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span class="nav-lbl">Doku</span>
+    </div>
+    <div class="nav-item" onclick="showPage('abrechnung',this)" id="nav-abrechnung" title="Abrechnung">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span class="nav-lbl">Abrechnung</span>
+    </div>
+    <div class="nav-item" onclick="showPage('statistik',this)" id="nav-statistik" title="Statistik">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="nav-lbl">Statistik</span>
+    </div>
+    <div class="nav-sep nav-bottom"></div>
+    <div class="nav-item" onclick="showPage('einstellungen',this)" id="nav-einstellungen" title="Einstellungen">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <span class="nav-lbl">Settings</span>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="mainContent">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="page active" id="page-dashboard">
+      <div style="padding:16px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:20px;font-weight:700;letter-spacing:-.4px" id="greeting">Dashboard</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">Wunsch-Pflege GmbH · Dortmund</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn" onclick="loadDashboard()">↻ Aktualisieren</button>
+            <button class="btn btn-primary" onclick="openModal('modal-klient-neu')">+ Neuer Klient</button>
+          </div>
+        </div>
+        <div class="stat-grid" id="dashKpis">
+          <div class="stat-card ac"><div class="stat-lbl">Aktive Klienten</div><div class="stat-val"><div class="spinner"></div></div></div>
+          <div class="stat-card bl"><div class="stat-lbl">Touren heute</div><div class="stat-val"><div class="spinner"></div></div></div>
+          <div class="stat-card wn"><div class="stat-lbl">MA im Dienst</div><div class="stat-val"><div class="spinner"></div></div></div>
+          <div class="stat-card tl"><div class="stat-lbl">Wohngemeinschaften</div><div class="stat-val"><div class="spinner"></div></div></div>
+          <div class="stat-card pr"><div class="stat-lbl">Umsatz (Monat)</div><div class="stat-val"><div class="spinner"></div></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+          <div class="sec">
+            <div class="sec-header"><span class="sec-title">Tourstatus heute</span><a class="btn btn-sm" onclick="showPage('touren',null)">alle →</a></div>
+            <div class="sec-body" id="dashTour"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
+          <div class="sec">
+            <div class="sec-header"><span class="sec-title">Meldungen</span></div>
+            <div class="sec-body" id="dashMeld"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
+          <div class="sec">
+            <div class="sec-header"><span class="sec-title">Abrechnung</span><span style="font-size:11px;color:var(--text3)" id="dashAbrMonat"></span></div>
+            <div class="sec-body" id="dashAbr"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ KLIENTEN ══ -->
+    <div class="page" id="page-klienten">
+      <div class="split-layout">
+        <!-- Liste -->
+        <div class="split-list">
+          <div class="list-header">
+            <div class="list-title">Klienten <span class="list-count" id="klientCount">–</span></div>
+            <div class="list-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="klientSearch" placeholder="Name, Klienten-Nr. …" oninput="debounce(loadKlienten,400)()">
+            </div>
+            <div style="display:flex;gap:4px;margin-top:6px">
+              <select id="klientPG" onchange="loadKlienten()" style="flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:var(--bg);color:var(--text2);font-family:var(--font)">
+                <option value="">Alle PG</option><option value="1">PG 1</option><option value="2">PG 2</option><option value="3">PG 3</option><option value="4">PG 4</option><option value="5">PG 5</option>
+              </select>
+              <select id="klientAktiv" onchange="loadKlienten()" style="flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:var(--bg);color:var(--text2);font-family:var(--font)">
+                <option value="true">Aktiv</option><option value="false">Entlassen</option><option value="">Alle</option>
+              </select>
+            </div>
+          </div>
+          <div class="list-items" id="klientList"><div class="loading"><div class="spinner"></div></div></div>
+          <div class="pagi" id="klientPagi"></div>
+          <div style="padding:8px;border-top:1px solid var(--border)">
+            <button class="btn btn-primary" style="width:100%" onclick="openModal('modal-klient-neu')">+ Neuer Klient</button>
+          </div>
+        </div>
+        <!-- Detail -->
+        <div class="split-detail" id="klientDetail">
+          <div class="empty" style="margin:auto">Klient auswählen</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MITARBEITER ══ -->
+    <div class="page" id="page-mitarbeiter">
+      <div class="split-layout">
+        <div class="split-list">
+          <div class="list-header">
+            <div class="list-title">Mitarbeiter <span class="list-count" id="maCount">–</span></div>
+            <div class="list-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="maSearch" placeholder="Name, Handzeichen …" oninput="debounce(loadMA,400)()">
+            </div>
+            <div style="display:flex;gap:4px;margin-top:6px">
+              <select id="maQual" onchange="loadMA()" style="flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:var(--bg);color:var(--text2);font-family:var(--font)">
+                <option value="">Alle</option>
+                <option value="examiniert_3j">Examiniert</option>
+                <option value="pflegehelfer">Pflegehelfer/in</option>
+                <option value="hilfskraft">Hilfskraft</option>
+                <option value="aushilfe">Aushilfe</option>
+              </select>
+              <select id="maStatus" onchange="loadMA()" style="flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:var(--bg);color:var(--text2);font-family:var(--font)">
+                <option value="aktiv">Aktiv</option>
+                <option value="">Alle</option>
+              </select>
+            </div>
+          </div>
+          <div class="list-items" id="maList"><div class="loading"><div class="spinner"></div></div></div>
+          <div class="pagi" id="maPagi"></div>
+          <div style="padding:8px;border-top:1px solid var(--border)">
+            <button class="btn btn-primary" style="width:100%" onclick="openModal('modal-ma-neu')">+ Neuer Mitarbeiter</button>
+          </div>
+        </div>
+        <div class="split-detail" id="maDetail">
+          <div class="empty" style="margin:auto">Mitarbeiter auswählen</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TOUREN ══ -->
+    <div class="page" id="page-touren">
+      <div style="padding:14px;display:flex;flex-direction:column;gap:12px;flex:1;overflow-y:auto">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="font-size:16px;font-weight:700">Tourenplanung</div>
+          <input type="date" id="tourDatumFilter" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);background:var(--bg)" onchange="loadTouren()">
+          <select id="tourStatusFilter" onchange="loadTouren()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);background:var(--bg)">
+            <option value="">Alle Status</option><option value="geplant">Geplant</option><option value="laeuft">Läuft</option><option value="abgeschlossen">Abgeschlossen</option><option value="verzoegert">Verzögert</option><option value="offen">Offen</option>
+          </select>
+          <button class="btn btn-primary" onclick="openModal('modal-tour-neu')" style="margin-left:auto">+ Neue Tour</button>
+        </div>
+        <div class="stat-grid" id="tourKpis"></div>
+        <div class="sec">
+          <div class="sec-header"><div class="sec-title">Alle Touren</div></div>
+          <div class="tbl-wrap">
+            <table class="tbl"><thead><tr><th>Tour-Nr.</th><th>Mitarbeiter</th><th>Start</th><th>Patienten</th><th>Bezirk</th><th>km</th><th>Status</th><th></th></tr></thead>
+            <tbody id="tourenBody"></tbody></table>
+          </div>
+          <div class="pagi" id="tourenPagi"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ DIENSTPLAN ══ -->
+    <div class="page" id="page-dienstplan">
+      <div style="display:flex;flex-direction:column;height:100%;overflow:hidden">
+        <!-- Toolbar -->
+        <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:var(--card);display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0">
+          <div style="font-size:15px;font-weight:700">Dienstplan</div>
+          <button class="btn btn-sm" onclick="changeMonth(-1)">&#8249; Vormonat</button>
+          <div style="font-size:13px;font-weight:600;min-width:120px;text-align:center" id="dpMonatLabel">–</div>
+          <button class="btn btn-sm" onclick="changeMonth(1)">Nächster &#8250;</button>
+          <select id="dpBezirkFilter" onchange="loadDienstplan()" style="padding:5px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);background:var(--bg)">
+            <option value="">Alle Bezirke</option>
+          </select>
+          <button class="btn btn-sm btn-primary" onclick="openModal('modal-dp-generator')" style="margin-left:auto">Auto-Generieren</button>
+          <button class="btn btn-sm" onclick="window.print()">Drucken</button>
+        </div>
+        <!-- Legende -->
+        <div style="padding:6px 14px;border-bottom:1px solid var(--border);background:var(--bg);display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0">
+          <span style="font-size:10px;color:var(--text3);font-weight:600;align-self:center">LEGENDE:</span>
+          <span class="dp-chip f12" style="font-size:10px">F12</span><span style="font-size:10px;color:var(--text2)">Frühdienst</span>
+          <span class="dp-chip s2" style="font-size:10px">S2</span><span style="font-size:10px;color:var(--text2)">Spätdienst</span>
+          <span class="dp-chip n1" style="font-size:10px">N</span><span style="font-size:10px;color:var(--text2)">Nachtdienst</span>
+          <span class="dp-chip k" style="font-size:10px">K</span><span style="font-size:10px;color:var(--text2)">Küche</span>
+          <span class="dp-chip x" style="font-size:10px">X</span><span style="font-size:10px;color:var(--text2)">Abwesend</span>
+          <span class="dp-chip u" style="font-size:10px">U</span><span style="font-size:10px;color:var(--text2)">Urlaub</span>
+        </div>
+        <!-- Tabelle -->
+        <div class="dp-wrap" id="dpTableWrap">
+          <div class="loading"><div class="spinner"></div> Dienstplan wird geladen …</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ZEITERFASSUNG ══ -->
+    <div class="page" id="page-zeiterfassung">
+      <div style="padding:14px;display:flex;flex-direction:column;gap:12px;flex:1;overflow-y:auto">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="font-size:16px;font-weight:700">Zeiterfassung</div>
+          <input type="date" id="zeDatum" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);background:var(--bg)" onchange="loadZeiterfassung()">
+          <button class="btn btn-primary" style="margin-left:auto" onclick="openModal('modal-ze-neu')">+ Zeit erfassen</button>
+        </div>
+        <div class="stat-grid" id="zeKpis"></div>
+        <div class="sec">
+          <div class="sec-header"><div class="sec-title">Stundenkonto</div></div>
+          <div class="sec-body">
+            <div class="ze-grid" id="zeGrid"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ DOKUMENTATION ══ -->
+    <div class="page" id="page-dokumentation">
+      <div style="padding:14px;display:flex;flex-direction:column;gap:12px;flex:1;overflow-y:auto">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="font-size:16px;font-weight:700">Pflegedokumentation</div>
+          <select id="dokuTypFilter" onchange="loadDoku()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);background:var(--bg)">
+            <option value="">Alle Typen</option><option value="sis">SIS</option><option value="pflegebericht">Pflegebericht</option><option value="leistungsnachweis">Leistungsnachweis</option><option value="wundprotokoll">Wundprotokoll</option>
+          </select>
+          <select id="dokuStatusFilter" onchange="loadDoku()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);background:var(--bg)">
+            <option value="">Alle Status</option><option value="entwurf">Entwurf</option><option value="fertig">Fertig</option><option value="ueberfaellig">Überfällig</option>
+          </select>
+          <button class="btn btn-primary" style="margin-left:auto" onclick="openModal('modal-doku-neu')">+ Neue Dokumentation</button>
+        </div>
+        <div class="stat-grid" id="dokuKpis"></div>
+        <div class="sec">
+          <div class="sec-header"><div class="sec-title">Dokumentationen</div></div>
+          <div class="tbl-wrap">
+            <table class="tbl"><thead><tr><th>Klient</th><th>Typ</th><th>Mitarbeiter</th><th>Datum</th><th>Status</th><th></th></tr></thead>
+            <tbody id="dokuBody"></tbody></table>
+          </div>
+          <div class="pagi" id="dokuPagi"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ABRECHNUNG ══ -->
+    <div class="page" id="page-abrechnung">
+      <div class="split-layout">
+        <div class="split-list">
+          <div class="list-header">
+            <div class="list-title">Klienten <span class="list-count" id="abrKlientCount">–</span></div>
+            <div class="list-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="abrSearch" placeholder="Klient suchen …" oninput="loadAbrKlienten()">
+            </div>
+          </div>
+          <div class="list-items" id="abrKlientList"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="split-detail" id="abrDetail">
+          <div class="empty" style="margin:auto">Klient für Abrechnung auswählen</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ STATISTIK ══ -->
+    <div class="page" id="page-statistik">
+      <div style="padding:14px;display:flex;flex-direction:column;gap:12px;flex:1;overflow-y:auto">
+        <div style="font-size:16px;font-weight:700">Statistiken & Auswertungen</div>
+        <div class="stat-grid" id="statKpis"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="sec">
+            <div class="sec-header"><div class="sec-title">Klienten nach Pflegegrad</div></div>
+            <div class="sec-body" id="statPG"></div>
+          </div>
+          <div class="sec">
+            <div class="sec-header"><div class="sec-title">Umsatz nach Leistungstyp</div></div>
+            <div class="sec-body" id="statAbr"></div>
+          </div>
+          <div class="sec">
+            <div class="sec-header"><div class="sec-title">Mitarbeiter nach Qualifikation</div></div>
+            <div class="sec-body" id="statMA"></div>
+          </div>
+          <div class="sec">
+            <div class="sec-header"><div class="sec-title">Dokumentationsquoten</div></div>
+            <div class="sec-body" id="statDoku"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EINSTELLUNGEN ══ -->
+    <div class="page" id="page-einstellungen">
+      <div style="padding:14px;max-width:700px;display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:16px;font-weight:700">Einstellungen</div>
+        <div class="sec">
+          <div class="sec-header"><div class="sec-title">Benutzerverwaltung</div><button class="btn btn-sm btn-primary" onclick="openModal('modal-user-neu')">+ Benutzer</button></div>
+          <div class="sec-body"><div id="userList"><div class="loading"><div class="spinner"></div></div></div></div>
+        </div>
+        <div class="sec">
+          <div class="sec-header"><div class="sec-title">Wohngemeinschaften</div><button class="btn btn-sm btn-primary" onclick="openModal('modal-wg-neu')">+ WG</button></div>
+          <div class="sec-body"><div id="wgList"><div class="loading"><div class="spinner"></div></div></div></div>
+        </div>
+        <div class="sec">
+          <div class="sec-header"><div class="sec-title">Kostenträger-Stammdaten</div><button class="btn btn-sm btn-primary" onclick="openModal('modal-kt-neu')">+ Kostenträger</button></div>
+          <div class="sec-body"><div id="ktList"><div class="loading"><div class="spinner"></div></div></div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Klient neu -->
+<div class="modal-overlay" id="modal-klient-neu">
+  <div class="modal lg">
+    <div class="modal-header"><div class="modal-title">Neuen Klienten aufnehmen</div><button class="modal-close" onclick="closeModal('modal-klient-neu')">✕</button></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Persönliche Daten</span></div><div class="sec-body">
+        <div class="form-grid">
+          <div class="fg"><span class="lbl">Klienten-Nr.</span><input class="inp" id="kn_nr" placeholder="Auto" readonly></div>
+          <div class="fg"><span class="lbl">Titel</span><select class="sel" id="kn_titel"><option value="">–</option><option>Herr</option><option>Frau</option><option>Dr.</option><option>Prof.</option></select></div>
+          <div class="fg"><span class="lbl">Vorname *</span><input class="inp" id="kn_vn" placeholder="Vorname"></div>
+          <div class="fg"><span class="lbl">Nachname *</span><input class="inp" id="kn_nn" placeholder="Nachname"></div>
+          <div class="fg"><span class="lbl">Geburtsname</span><input class="inp" id="kn_gbname" placeholder="bei Abweichung"></div>
+          <div class="fg"><span class="lbl">Geburtsdatum *</span><input class="inp" type="date" id="kn_geb"></div>
+          <div class="fg"><span class="lbl">Geschlecht</span><select class="sel" id="kn_gesch"><option value="">–</option><option value="weiblich">Weiblich</option><option value="maennlich">Männlich</option><option value="divers">Divers</option></select></div>
+          <div class="fg"><span class="lbl">Pflegegrad *</span><select class="sel" id="kn_pg"><option value="1">PG 1</option><option value="2">PG 2</option><option value="3" selected>PG 3</option><option value="4">PG 4</option><option value="5">PG 5</option></select></div>
+        </div>
+      </div></div>
+      <div class="sec"><div class="sec-header"><span class="sec-title">Adresse & Kontakt</span></div><div class="sec-body">
+        <div class="form-grid">
+          <div class="fg"><span class="lbl">Straße</span><input class="inp" id="kn_str" placeholder="Straße Nr."></div>
+          <div class="fg"><span class="lbl">Adresszusatz</span><input class="inp" id="kn_zusatz" placeholder="z.B. Appartement Nr. 5"></div>
+          <div class="fg"><span class="lbl">PLZ</span><input class="inp" id="kn_plz" placeholder="44XXX"></div>
+          <div class="fg"><span class="lbl">Ort</span><input class="inp" id="kn_ort" value="Dortmund"></div>
+          <div class="fg"><span class="lbl">Telefon 1</span><input class="inp" id="kn_tel1" placeholder="0231-…"></div>
+          <div class="fg"><span class="lbl">Telefon 2</span><input class="inp" id="kn_tel2" placeholder="optional"></div>
+          <div class="fg"><span class="lbl">Mobiltelefon</span><input class="inp" id="kn_mobil" placeholder="01XX-…"></div>
+          <div class="fg"><span class="lbl">E-Mail</span><input class="inp" type="email" id="kn_email" placeholder="optional"></div>
+        </div>
+      </div></div>
+      <div class="sec"><div class="sec-header"><span class="sec-title">Versicherung & SGB</span></div><div class="sec-body">
+        <div class="form-grid">
+          <div class="fg"><span class="lbl">Versicherungs-Nr.</span><input class="inp" id="kn_vnr" placeholder="A000000000"></div>
+          <div class="fg"><span class="lbl">Versicherungsstatus</span><input class="inp" id="kn_vstatus" placeholder="z.B. 50001"></div>
+          <div class="fg"><span class="lbl">Aktenzeichen</span><input class="inp" id="kn_az"></div>
+          <div class="fg"><span class="lbl">Schlüssel-Nr.</span><input class="inp" id="kn_schl"></div>
+          <div class="fg"><span class="lbl">Apotheke</span><input class="inp" id="kn_apoth" placeholder="Standard-Vorzugsapotheke"></div>
+          <div class="fg"><span class="lbl">Bezirk</span><select class="sel" id="kn_bez"><option value="">– auswählen –</option></select></div>
+          <div class="fg full" style="gap:10px;flex-direction:row;flex-wrap:wrap;align-items:center">
+            <label class="chk-row"><input type="checkbox" id="kn_37_3"> § 37.3 SGB XI</label>
+            <label class="chk-row"><input type="checkbox" id="kn_hausnotruf"> Hausnotruf</label>
+            <label class="chk-row"><input type="checkbox" id="kn_45b"> § 45b Entlastungsbetrag</label>
+            <label class="chk-row"><input type="checkbox" id="kn_36"> § 36 SGB XI</label>
+          </div>
+        </div>
+      </div></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-klient-neu')">Abbrechen</button><button class="btn btn-primary" onclick="saveKlient()">Klient aufnehmen</button></div>
+  </div>
+</div>
+
+<!-- Mitarbeiter neu -->
+<div class="modal-overlay" id="modal-ma-neu">
+  <div class="modal lg">
+    <div class="modal-header"><div class="modal-title">Neuen Mitarbeiter anlegen</div><button class="modal-close" onclick="closeModal('modal-ma-neu')">✕</button></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Stammdaten</span></div><div class="sec-body">
+        <div class="form-grid">
+          <div class="fg"><span class="lbl">Handzeichen</span><input class="inp" id="ma_hz" placeholder="z.B. NJC" style="text-transform:uppercase" maxlength="5"></div>
+          <div class="fg"><span class="lbl">MA-Nummer</span><input class="inp" id="ma_nr" placeholder="Auto"></div>
+          <div class="fg"><span class="lbl">Vorname *</span><input class="inp" id="ma_vn" placeholder="Vorname"></div>
+          <div class="fg"><span class="lbl">Nachname *</span><input class="inp" id="ma_nn" placeholder="Nachname"></div>
+          <div class="fg"><span class="lbl">Geburtsdatum</span><input class="inp" type="date" id="ma_geb"></div>
+          <div class="fg"><span class="lbl">Geschlecht</span><select class="sel" id="ma_gesch"><option value="">–</option><option value="weiblich">Weiblich</option><option value="maennlich">Männlich</option><option value="divers">Divers</option></select></div>
+          <div class="fg"><span class="lbl">Qualifikation *</span><select class="sel" id="ma_qual">
+            <option value="examiniert_3j">Altenpfleger/in (examiniert)</option>
+            <option value="pflegehelfer">Pflegehelfer/in</option>
+            <option value="hilfskraft">Hilfskraft</option>
+            <option value="auszubildender">Auszubildende/r</option>
+            <option value="aushilfe">Aushilfe</option>
+            <option value="wundmanager">Wundmanager/in</option>
+            <option value="palliativ">Palliativpflege</option>
+            <option value="stationsleitung">Stationsleitung</option>
+            <option value="apothekenfahrer">Apothekenfahrer/in</option>
+            <option value="tagespflegefahrer">Tagespflegefahrer/in</option>
+            <option value="kuechenhilfe">Küchenhilfe</option>
+          </select></div>
+          <div class="fg"><span class="lbl">Beschäftigung *</span><select class="sel" id="ma_besch">
+            <option value="vollzeit">Vollzeit</option><option value="teilzeit">Teilzeit</option>
+            <option value="minijob">Minijob</option><option value="springer">Springer</option><option value="aushilfe">Aushilfe</option>
+          </select></div>
+          <div class="fg"><span class="lbl">Stunden/Woche</span><input class="inp" type="number" id="ma_std" value="38.5" step="0.5"></div>
+          <div class="fg"><span class="lbl">Beschäftigungsnummer</span><input class="inp" id="ma_beschnr" placeholder="optional"></div>
+          <div class="fg full" style="flex-direction:row;gap:12px">
+            <label class="chk-row"><input type="checkbox" id="ma_pflegekraft" checked> Pflegekraft</label>
+            <label class="chk-row"><input type="checkbox" id="ma_springer"> Springer</label>
+          </div>
+        </div>
+      </div></div>
+      <div class="sec"><div class="sec-header"><span class="sec-title">Adresse & Kontakt</span></div><div class="sec-body">
+        <div class="form-grid">
+          <div class="fg"><span class="lbl">Straße</span><input class="inp" id="ma_str"></div>
+          <div class="fg"><span class="lbl">PLZ / Ort</span><div style="display:flex;gap:6px"><input class="inp" id="ma_plz" placeholder="PLZ" style="width:80px"><input class="inp" id="ma_ort" value="Dortmund"></div></div>
+          <div class="fg"><span class="lbl">Telefon 1</span><input class="inp" id="ma_tel1"></div>
+          <div class="fg"><span class="lbl">Mobiltelefon</span><input class="inp" id="ma_mobil"></div>
+          <div class="fg full"><span class="lbl">E-Mail</span><input class="inp" type="email" id="ma_email"></div>
+        </div>
+      </div></div>
+      <div class="sec"><div class="sec-header"><span class="sec-title">Zuordnung</span></div><div class="sec-body">
+        <div class="form-grid">
+          <div class="fg"><span class="lbl">Bezirk / Station</span><select class="sel" id="ma_bez"><option value="">– auswählen –</option></select></div>
+          <div class="fg"><span class="lbl">Pflegeteam / WG</span><select class="sel" id="ma_wg"><option value="">Kein Team</option></select></div>
+          <div class="fg"><span class="lbl">Eintrittsdatum</span><input class="inp" type="date" id="ma_eintritt"></div>
+        </div>
+      </div></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-ma-neu')">Abbrechen</button><button class="btn btn-primary" onclick="saveMA()">Mitarbeiter anlegen</button></div>
+  </div>
+</div>
+
+<!-- Tour neu -->
+<div class="modal-overlay" id="modal-tour-neu">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Neue Tour anlegen</div><button class="modal-close" onclick="closeModal('modal-tour-neu')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg"><span class="lbl">Datum *</span><input class="inp" type="date" id="tn_datum"></div>
+      <div class="fg"><span class="lbl">Startzeit</span><input class="inp" type="time" id="tn_start" value="07:00"></div>
+      <div class="fg"><span class="lbl">Bezirk</span><select class="sel" id="tn_bez"><option value="">– auswählen –</option></select></div>
+      <div class="fg"><span class="lbl">Fahrzeug</span><input class="inp" id="tn_fz" placeholder="PKW-01"></div>
+      <div class="fg full"><span class="lbl">Anmerkungen</span><textarea class="txa" id="tn_notiz" placeholder="Besondere Hinweise …" style="min-height:60px"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-tour-neu')">Abbrechen</button><button class="btn btn-primary" onclick="saveTour()">Anlegen</button></div>
+  </div>
+</div>
+
+<!-- Dienstplan Generator -->
+<div class="modal-overlay" id="modal-dp-generator">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Dienstplan automatisch generieren</div><button class="modal-close" onclick="closeModal('modal-dp-generator')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg"><span class="lbl">Von Datum *</span><input class="inp" type="date" id="dpg_von"></div>
+      <div class="fg"><span class="lbl">Bis Datum *</span><input class="inp" type="date" id="dpg_bis"></div>
+      <div class="fg"><span class="lbl">Min. Frühschicht / Tag</span><input class="inp" type="number" id="dpg_f" value="10" min="1"></div>
+      <div class="fg"><span class="lbl">Min. Spätschicht / Tag</span><input class="inp" type="number" id="dpg_s" value="8" min="1"></div>
+      <div class="fg"><span class="lbl">Min. Nachtschicht / Tag</span><input class="inp" type="number" id="dpg_n" value="4" min="1"></div>
+      <div class="fg"><span class="lbl">Bezirk (optional)</span><select class="sel" id="dpg_bez"><option value="">Alle</option></select></div>
+    </div>
+    <div style="background:var(--warn2);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--warn-t);margin-top:10px">
+      ⚠ Bestehende Schichten werden nicht überschrieben.
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-dp-generator')">Abbrechen</button><button class="btn btn-primary" onclick="genDP()">Generieren</button></div>
+  </div>
+</div>
+
+<!-- Doku neu -->
+<div class="modal-overlay" id="modal-doku-neu">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Neue Dokumentation</div><button class="modal-close" onclick="closeModal('modal-doku-neu')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg"><span class="lbl">Dokumentationsart</span><select class="sel" id="dn_typ">
+        <option value="sis">SIS-Bericht</option><option value="pflegebericht">Pflegebericht</option>
+        <option value="leistungsnachweis">Leistungsnachweis</option><option value="wundprotokoll">Wundprotokoll</option>
+        <option value="medikamentennachweis">Medikamentennachweis</option><option value="sturzprotokoll">Sturzprotokoll</option>
+      </select></div>
+      <div class="fg"><span class="lbl">Datum</span><input class="inp" type="date" id="dn_datum"></div>
+      <div class="fg full"><span class="lbl">Inhalt / Bericht</span><textarea class="txa" id="dn_inhalt" placeholder="Pflegebericht …" style="min-height:120px"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-doku-neu')">Abbrechen</button><button class="btn btn-primary" onclick="saveDoku()">Speichern</button></div>
+  </div>
+</div>
+
+<!-- User neu -->
+<div class="modal-overlay" id="modal-user-neu">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Neuen Benutzer anlegen</div><button class="modal-close" onclick="closeModal('modal-user-neu')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg"><span class="lbl">Vorname</span><input class="inp" id="un_vn"></div>
+      <div class="fg"><span class="lbl">Nachname</span><input class="inp" id="un_nn"></div>
+      <div class="fg full"><span class="lbl">E-Mail (Login)</span><input class="inp" type="email" id="un_email" placeholder="name@wunsch-pflege.de"></div>
+      <div class="fg full"><span class="lbl">Passwort</span><input class="inp" type="password" id="un_pw" placeholder="Min. 8 Zeichen"></div>
+      <div class="fg full"><span class="lbl">Rolle</span><select class="sel" id="un_rolle">
+        <option value="pflegekraft">Pflegekraft</option>
+        <option value="stationsleitung">Stationsleitung</option>
+        <option value="verwaltung">Verwaltung</option>
+        <option value="buchhaltung">Buchhaltung</option>
+        <option value="geschaeftsfuehrung">Geschäftsführung</option>
+        <option value="admin">Administrator</option>
+      </select></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-user-neu')">Abbrechen</button><button class="btn btn-primary" onclick="saveUser()">Anlegen</button></div>
+  </div>
+</div>
+
+<!-- WG neu -->
+<div class="modal-overlay" id="modal-wg-neu">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Wohngemeinschaft anlegen</div><button class="modal-close" onclick="closeModal('modal-wg-neu')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg full"><span class="lbl">Name *</span><input class="inp" id="wg_name" placeholder="z.B. WG Rosenweg"></div>
+      <div class="fg"><span class="lbl">Kürzel</span><input class="inp" id="wg_kuerzel" placeholder="WG-R" maxlength="10"></div>
+      <div class="fg"><span class="lbl">Kapazität</span><input class="inp" type="number" id="wg_kap" value="12"></div>
+      <div class="fg full"><span class="lbl">Adresse</span><input class="inp" id="wg_adr" placeholder="Straße Nr., PLZ Ort"></div>
+      <div class="fg"><span class="lbl">Bezirk</span><select class="sel" id="wg_bez"><option value="">– auswählen –</option></select></div>
+      <div class="fg"><span class="lbl">Monatspauschale (€)</span><input class="inp" type="number" id="wg_pau" value="1650"></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-wg-neu')">Abbrechen</button><button class="btn btn-primary" onclick="saveWG()">Anlegen</button></div>
+  </div>
+</div>
+
+<!-- Kostenträger neu -->
+<div class="modal-overlay" id="modal-kt-neu">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Kostenträger anlegen</div><button class="modal-close" onclick="closeModal('modal-kt-neu')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg full"><span class="lbl">Name *</span><input class="inp" id="kt_name" placeholder="z.B. IKK Classic Dortmund"></div>
+      <div class="fg"><span class="lbl">Kürzel</span><input class="inp" id="kt_kuerzel"></div>
+      <div class="fg"><span class="lbl">Typ</span><select class="sel" id="kt_typ">
+        <option value="krankenkasse">Krankenkasse</option>
+        <option value="pflegekasse">Pflegekasse</option>
+        <option value="selbstzahler">Selbstzahler</option>
+        <option value="beihilfe">Beihilfe</option>
+        <option value="sozialhilfe">Sozialhilfe</option>
+      </select></div>
+      <div class="fg"><span class="lbl">IK-Nummer</span><input class="inp" id="kt_ik"></div>
+      <div class="fg"><span class="lbl">Telefon</span><input class="inp" id="kt_tel"></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-kt-neu')">Abbrechen</button><button class="btn btn-primary" onclick="saveKT()">Anlegen</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════
+// KONFIGURATION & INIT
+// ════════════════════════════════════════
+const API = window.location.origin + '/api';
+let token = localStorage.getItem('cf_token');
+let user = null;
+let bezirkeData = [], wgsData = [], kostentraegerData = [];
+let klientPage=1, maPage=1, tourPage=1, dokuPage=1;
+let selectedKlient=null, selectedMA=null, selectedAbrKlient=null;
+let dpJahr=new Date().getFullYear(), dpMonat=new Date().getMonth()+1;
+
+// Datum
+document.getElementById('topDate').textContent = new Date().toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
+
+// ════════════════════════════════════════
+// API HELPER
+// ════════════════════════════════════════
+async function api(path, opts={}) {
+  const res = await fetch(API+path, {
+    headers:{'Content-Type':'application/json',...(token?{'Authorization':'Bearer '+token}:{})},
+    ...opts
+  });
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.error||'API Fehler '+res.status);
+  return data;
+}
+
+// ════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════
+document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+async function doLogin() {
+  const email=document.getElementById('loginEmail').value;
+  const pw=document.getElementById('loginPw').value;
+  const btn=document.getElementById('loginBtn');
+  const err=document.getElementById('loginError');
+  err.style.display='none';
+  btn.textContent='…'; btn.disabled=true;
+  try {
+    const d = await api('/auth/login',{method:'POST',body:JSON.stringify({email,passwort:pw})});
+    token=d.token; user=d.benutzer;
+    localStorage.setItem('cf_token',token);
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('appShell').style.display='grid';
+    initApp();
+  } catch(e) { err.textContent=e.message; err.style.display='block'; }
+  finally { btn.textContent='Anmelden'; btn.disabled=false; }
+}
+
+function logout() {
+  token=null; user=null; localStorage.removeItem('cf_token');
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('appShell').style.display='none';
+}
+
+// ════════════════════════════════════════
+// APP INIT
+// ════════════════════════════════════════
+async function initApp() {
+  if(!token) return;
+  try {
+    const d = await api('/auth/me');
+    user = d.benutzer;
+    const ini = (user.vorname[0]+user.nachname[0]).toUpperCase();
+    document.getElementById('userAv').textContent = ini;
+    document.getElementById('userName').textContent = user.vorname+' '+user.nachname;
+    const h=new Date().getHours();
+    const g=h<12?'Guten Morgen':h<18?'Guten Tag':'Guten Abend';
+    document.getElementById('greeting').textContent = g+', '+user.vorname;
+    // Stammdaten laden
+    const [bz,wg,kt] = await Promise.all([api('/bezirke'),api('/wohngemeinschaften'),api('/kostentraeger').catch(()=>({kostentraeger:[]}))]);
+    bezirkeData = bz.bezirke||[];
+    wgsData = wg.wgs||[];
+    kostentraegerData = kt.kostentraeger||[];
+    fillSelects();
+    // Dienstplan Standard auf aktuellen Monat
+    document.getElementById('dpMonatLabel').textContent = monatName(dpMonat)+' '+dpJahr;
+    // Tour-Datum Standard heute
+    document.getElementById('tourDatumFilter').value = new Date().toISOString().split('T')[0];
+    document.getElementById('tn_datum').value = new Date().toISOString().split('T')[0];
+    // ZE-Datum Standard heute
+    document.getElementById('zeDatum').value = new Date().toISOString().split('T')[0];
+    // Doku-Datum
+    document.getElementById('dn_datum').value = new Date().toISOString().split('T')[0];
+    // DP Generator Datum
+    const ersterTag = `${dpJahr}-${String(dpMonat).padStart(2,'0')}-01`;
+    const letzterTag = `${dpJahr}-${String(dpMonat).padStart(2,'0')}-${new Date(dpJahr,dpMonat,0).getDate()}`;
+    document.getElementById('dpg_von').value = ersterTag;
+    document.getElementById('dpg_bis').value = letzterTag;
+    // Dashboard laden
+    loadDashboard();
+    // Badges
+    api('/dashboard').then(d=>{
+      if(d.patienten?.aktiv) document.getElementById('badge-klienten').textContent=d.patienten.aktiv;
+    }).catch(()=>{});
+  } catch(e) { if(e.message.includes('ungültig')||e.message.includes('401')) logout(); }
+}
+
+function fillSelects() {
+  const bezIds = ['kn_bez','ma_bez','tn_bez','dpg_bez','wg_bez'];
+  bezIds.forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    bezirkeData.forEach(b=>{const o=document.createElement('option');o.value=b.id;o.textContent=b.name;el.appendChild(o);});
+  });
+  const wgIds = ['ma_wg'];
+  wgIds.forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    wgsData.forEach(w=>{const o=document.createElement('option');o.value=w.id;o.textContent=w.name;el.appendChild(o);});
+  });
+  // DP Bezirk-Filter in Sidebar
+  const dpBez=document.getElementById('dpBezirkFilter');
+  if(dpBez) bezirkeData.forEach(b=>{const o=document.createElement('option');o.value=b.id;o.textContent=b.name;dpBez.appendChild(o);});
+}
+
+if(token){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appShell').style.display='grid';
+  initApp();
+}
+
+// ════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════
+const pageLoaders = {
+  klienten: loadKlienten,
+  mitarbeiter: loadMA,
+  touren: loadTouren,
+  dienstplan: loadDienstplan,
+  zeiterfassung: loadZeiterfassung,
+  dokumentation: loadDoku,
+  abrechnung: loadAbrKlienten,
+  statistik: loadStatistik,
+  einstellungen: loadEinstellungen,
+};
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  if(el) el.classList.add('active');
+  else document.getElementById('nav-'+id)?.classList.add('active');
+  document.getElementById('mainContent').scrollTop=0;
+  if(pageLoaders[id]) pageLoaders[id]();
+}
+
+// ════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════
+async function loadDashboard() {
+  try {
+    const d = await api('/dashboard');
+    const p=d.patienten,t=d.touren,m=d.mitarbeiter,a=d.abrechnung,w=d.wgs;
+    document.getElementById('dashKpis').innerHTML=`
+      <div class="stat-card ac"><div class="stat-lbl">Aktive Klienten</div><div class="stat-val">${fmt(p?.aktiv)}</div><div class="stat-delta">↑ +${p?.neu||0} diese Woche</div></div>
+      <div class="stat-card bl"><div class="stat-lbl">Touren heute</div><div class="stat-val">${fmt(t?.gesamt)}</div><div class="stat-delta">${t?.abgeschlossen||0} abgeschl.</div></div>
+      <div class="stat-card wn"><div class="stat-lbl">MA im Dienst</div><div class="stat-val">${fmt(parseInt(m?.gesamt||0)-parseInt(m?.krank||0)-parseInt(m?.urlaub||0))}</div><div class="stat-delta warn">${m?.krank||0} krank</div></div>
+      <div class="stat-card tl"><div class="stat-lbl">Wohngemeinschaften</div><div class="stat-val">${fmt(w?.wgs)}</div><div class="stat-delta">${w?.bewohner||0} Bewohner</div></div>
+      <div class="stat-card pr"><div class="stat-lbl">Abgerechnet (Monat)</div><div class="stat-val">${fmtEur(a?.abgerechnet)}</div><div class="stat-delta blue">+ ${fmtEur(a?.offen)} offen</div></div>
+    `;
+    document.getElementById('dashTour').innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div style="background:var(--accent2);border-radius:8px;padding:10px 12px"><div style="font-size:20px;font-weight:700;color:var(--accent-t)">${t?.abgeschlossen||0}</div><div style="font-size:10px;color:var(--accent);margin-top:1px">Abgeschlossen</div></div>
+        <div style="background:var(--blue2);border-radius:8px;padding:10px 12px"><div style="font-size:20px;font-weight:700;color:var(--blue-t)">${t?.laufend||0}</div><div style="font-size:10px;color:var(--blue);margin-top:1px">Läuft</div></div>
+        <div style="background:var(--warn2);border-radius:8px;padding:10px 12px"><div style="font-size:20px;font-weight:700;color:var(--warn-t)">${t?.verzoegert||0}</div><div style="font-size:10px;color:var(--warn);margin-top:1px">Verzögert</div></div>
+        <div style="background:var(--red2);border-radius:8px;padding:10px 12px"><div style="font-size:20px;font-weight:700;color:var(--red-t)">${t?.offen||0}</div><div style="font-size:10px;color:var(--red);margin-top:1px">Unbesetzt</div></div>
+      </div>
+      <div class="prog-bar" style="height:5px"><div class="prog-fill" style="width:${t?.gesamt>0?Math.round((t.abgeschlossen||0)/t.gesamt*100):0}%"></div></div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;font-family:var(--mono)">${t?.gesamt>0?Math.round((t.abgeschlossen||0)/t.gesamt*100):0}% abgeschlossen</div>
+    `;
+    document.getElementById('dashMeld').innerHTML=`
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${(t?.offen>0)?`<div style="display:flex;gap:8px;align-items:center"><div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div><div style="font-size:12px">${t.offen} Tour(en) unbesetzt</div></div>`:``}
+        ${(d.medikamente?.kritisch>0)?`<div style="display:flex;gap:8px;align-items:center"><div style="width:8px;height:8px;border-radius:50%;background:var(--warn);flex-shrink:0"></div><div style="font-size:12px">${d.medikamente.kritisch} Medikament(e) kritisch</div></div>`:``}
+        ${(d.dokumentation?.ueberfaellig>0)?`<div style="display:flex;gap:8px;align-items:center"><div style="width:8px;height:8px;border-radius:50%;background:var(--warn);flex-shrink:0"></div><div style="font-size:12px">${d.dokumentation.ueberfaellig} Doku überfällig</div></div>`:``}
+        <div style="display:flex;gap:8px;align-items:center"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0"></div><div style="font-size:12px">System aktiv · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr</div></div>
+      </div>
+    `;
+    const monat = new Date().toLocaleDateString('de-DE',{month:'long',year:'numeric'});
+    document.getElementById('dashAbrMonat').textContent = monat;
+    document.getElementById('dashAbr').innerHTML=`
+      <div class="prog-row"><div class="prog-meta"><span>Abgerechnet</span><span style="color:var(--accent);font-weight:600">${fmtEur(a?.abgerechnet)}</span></div><div class="prog-bar"><div class="prog-fill" style="width:${a?.abgerechnet&&a?.offen?Math.min(100,Math.round(parseFloat(a.abgerechnet)/(parseFloat(a.abgerechnet)+parseFloat(a.offen))*100)):70}%"></div></div></div>
+      <div class="prog-row"><div class="prog-meta"><span>Offen</span><span style="color:var(--warn);font-weight:600">${fmtEur(a?.offen)}</span></div><div class="prog-bar"><div class="prog-fill pf-warn" style="width:30%"></div></div></div>
+      <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px;display:flex;justify-content:space-between;font-size:12px">
+        <span style="color:var(--text2)">Monatsziel</span><span style="font-weight:700;font-size:14px">€ 1.200.000</span>
+      </div>
+    `;
+  } catch(e) { showToast('Dashboard: '+e.message,'red'); }
+}
+
+// ════════════════════════════════════════
+// KLIENTEN
+// ════════════════════════════════════════
+async function loadKlienten(page) {
+  if(page) klientPage=page;
+  const suche=document.getElementById('klientSearch')?.value||'';
+  const pg=document.getElementById('klientPG')?.value||'';
+  const aktiv=document.getElementById('klientAktiv')?.value;
+  const params=new URLSearchParams({page:klientPage,limit:30});
+  if(suche) params.append('suche',suche);
+  if(pg) params.append('pflegegrad',pg);
+  if(aktiv!==undefined&&aktiv!=='') params.append('aktiv',aktiv);
+  try {
+    const data = await api('/patienten?'+params);
+    document.getElementById('klientCount').textContent = data.gesamt;
+    const pgColor={'1':'bg-','2':'bg-','3':'bw-','4':'bb-','5':'br-'};
+    const list = document.getElementById('klientList');
+    list.innerHTML = data.patienten.map(p=>`
+      <div class="list-item${selectedKlient?.id===p.id?' active':''}" onclick="selectKlient('${p.id}',this)">
+        <div class="li-av" style="background:${pgBg(p.pflegegrad)};color:${pgColor2(p.pflegegrad)}">${p.vorname[0]}${p.nachname[0]}</div>
+        <div class="li-info">
+          <div class="li-name">${p.nachname}, ${p.vorname}</div>
+          <div class="li-sub">${p.pat_nummer||'–'} · ${p.ort||'Dortmund'}</div>
+        </div>
+        <span class="badge ${pgColor[p.pflegegrad]||'bgray-'} li-badge">PG ${p.pflegegrad}</span>
+      </div>`).join('') || '<div class="empty">Keine Klienten gefunden</div>';
+    renderPagi('klientPagi',data,'loadKlienten');
+  } catch(e) { showToast('Fehler: '+e.message,'red'); }
+}
+
+async function selectKlient(id, el) {
+  document.querySelectorAll('#klientList .list-item').forEach(i=>i.classList.remove('active'));
+  el?.classList.add('active');
+  const detail = document.getElementById('klientDetail');
+  detail.innerHTML='<div class="loading" style="margin:auto"><div class="spinner"></div> Lade …</div>';
+  try {
+    const data = await api('/patienten/'+id);
+    selectedKlient = data.patient;
+    renderKlientDetail(data);
+  } catch(e) { detail.innerHTML='<div class="empty">Fehler beim Laden</div>'; }
+}
+
+function renderKlientDetail(data) {
+  const p = data.patient;
+  const alter = p.geburtsdatum ? Math.floor((new Date()-new Date(p.geburtsdatum))/31557600000) : '–';
+  const pgBadgeClass = {'1':'bg-','2':'bg-','3':'bw-','4':'bb-','5':'br-'}[p.pflegegrad]||'bgray-';
+  const sgbChips = [
+    p.sgb_xi_36&&'§ 36 SGB XI', p.sgb_xi_37_3&&'§ 37.3 SGB XI',
+    p.entlastungsbetrag_45b&&'§ 45b Entlastungsbetrag', p.hausnotruf&&'Hausnotruf',
+  ].filter(Boolean);
+
+  document.getElementById('klientDetail').innerHTML = `
+    <!-- Header -->
+    <div class="detail-header">
+      <div class="detail-toprow">
+        <div class="detail-avatar" style="background:${pgBg(p.pflegegrad)};color:${pgColor2(p.pflegegrad)}">${p.vorname[0]}${p.nachname[0]}</div>
+        <div class="detail-info">
+          <div class="detail-name">${p.nachname}, ${p.vorname}${p.titel?' ('+p.titel+')':''}</div>
+          <div class="detail-meta">
+            <span class="detail-meta-item"><span class="badge ${pgBadgeClass}">Pflegegrad ${p.pflegegrad}</span></span>
+            <span class="detail-meta-item" style="font-family:var(--mono);font-size:11px">${p.pat_nummer||'–'}</span>
+            <span class="detail-meta-item">${alter} Jahre · ${p.geschlecht||'–'}</span>
+            <span class="detail-meta-item">${p.geburtsdatum?new Date(p.geburtsdatum).toLocaleDateString('de-DE'):'–'}</span>
+            <span class="detail-meta-item"><span class="badge ${p.aktiv?'bg-':'br-'}">${p.aktiv?'aktiv':'entlassen'}</span></span>
+          </div>
+          <div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">
+            ${sgbChips.map(c=>`<span class="badge bb-" style="font-size:10px">${c}</span>`).join('')}
+          </div>
+        </div>
+        <div class="detail-actions">
+          <button class="btn btn-sm" onclick="showToast('Druckansicht','')">Drucken</button>
+          <button class="btn btn-sm" onclick="showToast('KV-Karte','')">KV-Karte</button>
+          <button class="btn btn-sm btn-primary" onclick="showToast('Bearbeiten','')">Bearbeiten</button>
+        </div>
+      </div>
+    </div>
+    <!-- Tabs -->
+    <div class="tab-bar" id="klientTabs">
+      <div class="tab active" onclick="switchTab('klientTabs','klient-stamm',this)">Stammdaten</div>
+      <div class="tab" onclick="switchTab('klientTabs','klient-kontakte',this)">Kontakte</div>
+      <div class="tab" onclick="switchTab('klientTabs','klient-aerzte',this)">Ärzte</div>
+      <div class="tab" onclick="switchTab('klientTabs','klient-kt',this)">Kostenträger</div>
+      <div class="tab" onclick="switchTab('klientTabs','klient-abr',this)">Abrechnung</div>
+      <div class="tab" onclick="switchTab('klientTabs','klient-doku',this)">Dokumentation</div>
+      <div class="tab" onclick="switchTab('klientTabs','klient-medi',this)">Medikamente</div>
+      <div class="tab" onclick="switchTab('klientTabs','klient-pflege',this)">Pflegeplanung</div>
+    </div>
+    <!-- Tab Inhalte -->
+    <div id="klient-stamm" class="tab-content active">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Persönliche Daten</span><button class="btn btn-sm" onclick="showToast('Bearbeiten …','')">Bearbeiten</button></div><div class="sec-body">
+        <div class="form-grid">
+          <div class="fg"><span class="lbl">Klienten-Nr.</span><input class="inp" readonly value="${p.pat_nummer||'–'}"></div>
+          <div class="fg"><span class="lbl">Titel</span><input class="inp" readonly value="${p.titel||'–'}"></div>
+          <div class="fg"><span class="lbl">Vorname</span><input class="inp" readonly value="${p.vorname}"></div>
+          <div class="fg"><span class="lbl">Nachname</span><input class="inp" readonly value="${p.nachname}"></div>
+          <div class="fg"><span class="lbl">Geburtsname</span><input class="inp" readonly value="${p.geburtsname||'–'}"></div>
+          <div class="fg"><span class="lbl">Geburtsdatum</span><input class="inp" readonly value="${p.geburtsdatum?new Date(p.geburtsdatum).toLocaleDateString('de-DE'):'–'}"></div>
+          <div class="fg"><span class="lbl">Geschlecht</span><input class="inp" readonly value="${p.geschlecht||'–'}"></div>
+          <div class="fg"><span class="lbl">Pflegegrad</span><input class="inp" readonly value="Pflegegrad ${p.pflegegrad}"></div>
+          <div class="fg"><span class="lbl">Straße</span><input class="inp" readonly value="${(p.strasse||'')+(p.hausnummer?' '+p.hausnummer:'')}"></div>
+          <div class="fg"><span class="lbl">Adresszusatz</span><input class="inp" readonly value="${p.adresszusatz||'–'}"></div>
+          <div class="fg"><span class="lbl">PLZ / Ort</span><input class="inp" readonly value="${p.plz||''} ${p.ort||''}"></div>
+          <div class="fg"><span class="lbl">Telefon 1</span><input class="inp" readonly value="${p.telefon1||'–'}"></div>
+          <div class="fg"><span class="lbl">Telefon 2</span><input class="inp" readonly value="${p.telefon2||'–'}"></div>
+          <div class="fg"><span class="lbl">Mobiltelefon</span><input class="inp" readonly value="${p.mobiltelefon||'–'}"></div>
+          <div class="fg"><span class="lbl">E-Mail</span><input class="inp" readonly value="${p.email||'–'}"></div>
+          <div class="fg"><span class="lbl">Apotheke</span><input class="inp" readonly value="${p.apotheke||'–'}"></div>
+          <div class="fg"><span class="lbl">Versicherungs-Nr.</span><input class="inp" readonly value="${p.versicherungsnr||'–'}"></div>
+          <div class="fg"><span class="lbl">Aktenzeichen</span><input class="inp" readonly value="${p.aktenzeichen||'–'}"></div>
+          <div class="fg"><span class="lbl">Schlüssel-Nr.</span><input class="inp" readonly value="${p.schluessel_nr||'–'}"></div>
+          <div class="fg"><span class="lbl">Aufnahme</span><input class="inp" readonly value="${p.aufnahmedatum?new Date(p.aufnahmedatum).toLocaleDateString('de-DE'):'–'}"></div>
+        </div>
+      </div></div>
+      ${p.diagnosen?.length?`<div class="sec"><div class="sec-header"><span class="sec-title">Diagnosen</span></div><div class="sec-body">
+        ${p.diagnosen.map(d=>`<div style="display:flex;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);font-size:12px"><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0"></div>${d}</div>`).join('')}
+      </div></div>`:''}
+      ${p.bemerkungen?`<div class="sec"><div class="sec-header"><span class="sec-title">Bemerkungen</span></div><div class="sec-body"><div style="font-size:12px;color:var(--text2);white-space:pre-line">${p.bemerkungen}</div></div></div>`:''}
+    </div>
+    <div id="klient-kontakte" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Kontakte</span><button class="btn btn-sm btn-primary" onclick="showToast('Kontakt hinzufügen','')">+ Hinzufügen</button></div><div class="sec-body">
+        ${(data.kontakte||[]).length?`<table class="inline-tbl"><thead><tr><th>Name</th><th>Beziehung</th><th>Telefon</th><th>Mobil</th><th>Bevollmächtigt</th></tr></thead><tbody>
+          ${(data.kontakte||[]).map(k=>`<tr><td><strong>${k.nachname||''}, ${k.vorname||''}</strong></td><td>${k.beziehung||'–'}</td><td>${k.telefon||'–'}</td><td>${k.mobil||'–'}</td><td>${k.ist_bevollmaechtigt?'<span class="badge bg-">Ja</span>':'–'}</td></tr>`).join('')}
+        </tbody></table>`:'<div class="empty">Keine Kontakte hinterlegt</div>'}
+      </div></div>
+    </div>
+    <div id="klient-aerzte" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Ärzte</span><button class="btn btn-sm btn-primary" onclick="showToast('Arzt hinzufügen','')">+ Hinzufügen</button></div><div class="sec-body">
+        ${(data.aerzte||[]).length?`<table class="inline-tbl"><thead><tr><th>Name</th><th>Fachrichtung</th><th>Telefon</th><th>Hausarzt</th></tr></thead><tbody>
+          ${(data.aerzte||[]).map(a=>`<tr><td><strong>${a.arzt_name||''}</strong></td><td>${a.fachrichtung||'–'}</td><td>${a.telefon||'–'}</td><td>${a.ist_hausarzt?'<span class="badge bg-">Ja</span>':'–'}</td></tr>`).join('')}
+        </tbody></table>`:'<div class="empty">Keine Ärzte hinterlegt</div>'}
+      </div></div>
+    </div>
+    <div id="klient-kt" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Kostenträger</span><button class="btn btn-sm btn-primary" onclick="showToast('Kostenträger hinzufügen','')">+ Hinzufügen</button></div><div class="sec-body">
+        ${(data.kostentraeger||[]).length?`<table class="inline-tbl"><thead><tr><th>Name</th><th>Typ</th><th>Telefon</th><th>Anteil %</th></tr></thead><tbody>
+          ${(data.kostentraeger||[]).map(k=>`<tr><td><strong>${k.kostentraeger_name||''}</strong></td><td><span class="badge bgray-">${k.typ||''}</span></td><td>${k.telefon||'–'}</td><td style="font-family:var(--mono)">${k.anteil_prozent||100}%</td></tr>`).join('')}
+        </tbody></table>`:'<div class="empty">Keine Kostenträger hinterlegt</div>'}
+      </div></div>
+    </div>
+    <div id="klient-abr" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Leistungsaufträge</span><button class="btn btn-sm btn-primary" onclick="showToast('Auftrag hinzufügen','')">+ Auftrag</button></div><div class="sec-body">
+        ${(data.leistungsauftraege||[]).length?`<table class="inline-tbl"><thead><tr><th>S</th><th>Leistungsgrundlage</th><th>Beleg-Nr.</th><th>Von</th><th>Bis</th><th>Bearb.</th></tr></thead><tbody>
+          ${(data.leistungsauftraege||[]).map(l=>`<tr>
+            <td><input type="checkbox" ${l.aktiv?'checked':''}></td>
+            <td>${sgbLabel(l.leistungsgrundlage)}</td>
+            <td style="font-family:var(--mono);font-size:11px">${l.beleg_nr||'–'}</td>
+            <td style="font-family:var(--mono);font-size:11px">${l.von_datum?new Date(l.von_datum).toLocaleDateString('de-DE'):'–'}</td>
+            <td style="font-family:var(--mono);font-size:11px">${l.bis_datum?new Date(l.bis_datum).toLocaleDateString('de-DE'):'–'}</td>
+            <td style="font-size:11px;color:var(--text3)">${l.bearbeitungsstand||'–'}</td>
+          </tr>`).join('')}
+        </tbody></table>`:'<div class="empty">Keine Leistungsaufträge</div>'}
+      </div></div>
+      <div class="sec"><div class="sec-header"><span class="sec-title">Rechnungen</span><button class="btn btn-sm btn-blue" onclick="showToast('Rechnungen erstellen','')">Rechnungen erstellen</button></div><div class="sec-body">
+        ${(data.abrechnungen||[]).length?`<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Klicken zum Auswählen</div>
+        ${(data.abrechnungen||[]).map(a=>`
+          <div class="abr-rech-row">
+            <input type="checkbox">
+            <span class="abr-sgb ${sGbClass(a.sgb_typ)}">${sgbKurz(a.sgb_typ)}</span>
+            <span style="font-size:12px">${a.kostentraeger_name||'–'}</span>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${a.beleg_nr||'–'}</span>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${a.anteil_prozent||100}%</span>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${a.rechnung_nr||'–'}</span>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${a.rechnung_datum?new Date(a.rechnung_datum).toLocaleDateString('de-DE'):'–'}</span>
+            <span class="abr-betrag">€ ${parseFloat(a.gesamtbetrag||0).toFixed(2)}</span>
+          </div>`).join('')}
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="showToast('Vorschau','')">Vorschau</button>
+          <button class="btn btn-sm btn-blue" onclick="showToast('Drucken','')">Drucken</button>
+          <label class="chk-row" style="font-size:11px"><input type="checkbox" checked> Rechnungen</label>
+          <label class="chk-row" style="font-size:11px"><input type="checkbox"> Leistungsnachweis</label>
+          <label class="chk-row" style="font-size:11px"><input type="checkbox"> Lastschrift</label>
+        </div>`:'<div class="empty">Keine Abrechnungen für diesen Monat</div>'}
+      </div></div>
+    </div>
+    <div id="klient-doku" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Dokumentationen</span><button class="btn btn-sm btn-primary" onclick="openModal('modal-doku-neu')">+ Neue Doku</button></div><div class="sec-body">
+        ${(data.dokumentationen||[]).length?`<table class="inline-tbl"><thead><tr><th>Typ</th><th>Mitarbeiter</th><th>Datum</th><th>Status</th></tr></thead><tbody>
+          ${(data.dokumentationen||[]).map(d=>`<tr onclick="showToast('Dokumentation öffnen','')"><td><span class="badge bgray-">${dokuTypLabel(d.typ)}</span></td><td>${d.ma||'–'}</td><td style="font-family:var(--mono);font-size:11px">${new Date(d.erstellt_am).toLocaleDateString('de-DE')}</td><td><span class="badge ${dokuStatusClass(d.status)}">${d.status}</span></td></tr>`).join('')}
+        </tbody></table>`:'<div class="empty">Keine Dokumentationen</div>'}
+      </div></div>
+    </div>
+    <div id="klient-medi" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Medikamentenplan</span><button class="btn btn-sm btn-primary" onclick="showToast('Medikament hinzufügen','')">+ Hinzufügen</button></div><div class="sec-body">
+        ${(data.medikamentenplan||[]).length?`<table class="inline-tbl"><thead><tr><th>Medikament</th><th>Stärke</th><th>Dosierung</th><th>M</th><th>Mi</th><th>A</th><th>N</th><th>BTM</th></tr></thead><tbody>
+          ${(data.medikamentenplan||[]).map(m=>`<tr><td><strong>${m.name}</strong></td><td>${m.staerke||'–'}</td><td>${m.dosierung||'–'}</td>
+          <td>${m.morgens?'✓':'–'}</td><td>${m.mittags?'✓':'–'}</td><td>${m.abends?'✓':'–'}</td><td>${m.nachts?'✓':'–'}</td>
+          <td>${m.btm_pflichtig?'<span class="badge br-">BTM</span>':'–'}</td></tr>`).join('')}
+        </tbody></table>`:'<div class="empty">Kein Medikamentenplan hinterlegt</div>'}
+      </div></div>
+    </div>
+    <div id="klient-pflege" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">SIS — Strukturierte Informationssammlung</span><button class="btn btn-sm btn-primary" onclick="showToast('SIS bearbeiten','')">SIS bearbeiten</button></div><div class="sec-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${['Kognition & Kommunikation','Mobilität & Bewegung','Krankheitsbezogene Anforderungen','Selbstversorgung','Leben in sozialen Beziehungen','Haushaltsführung'].map((t,i)=>`
+          <div style="border:1px solid var(--border);border-radius:var(--r);padding:10px">
+            <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px">Themenfeld ${i+1}: ${t}</div>
+            <div style="font-size:12px;color:var(--text3);min-height:40px">Noch nicht ausgefüllt</div>
+          </div>`).join('')}
+        </div>
+      </div></div>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════
+// MITARBEITER
+// ════════════════════════════════════════
+async function loadMA(page) {
+  if(page) maPage=page;
+  const suche=document.getElementById('maSearch')?.value||'';
+  const qual=document.getElementById('maQual')?.value||'';
+  const status=document.getElementById('maStatus')?.value||'';
+  const params=new URLSearchParams({page:maPage,limit:30});
+  if(suche) params.append('suche',suche);
+  if(qual) params.append('qualifikation',qual);
+  if(status) params.append('status',status);
+  try {
+    const data = await api('/mitarbeiter?'+params);
+    document.getElementById('maCount').textContent = data.gesamt;
+    const list = document.getElementById('maList');
+    list.innerHTML = data.mitarbeiter.map(m=>`
+      <div class="list-item${selectedMA?.id===m.id?' active':''}" onclick="selectMA('${m.id}',this)">
+        <div class="li-av" style="background:var(--blue2);color:var(--blue-t)">${m.vorname[0]}${m.nachname[0]}</div>
+        <div class="li-info">
+          <div class="li-name">${m.nachname}, ${m.vorname}${m.handzeichen?` <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">(${m.handzeichen})</span>`:''}</div>
+          <div class="li-sub">${qualLabel(m.qualifikation)} · ${m.bezirk||'–'}</div>
+        </div>
+        <span class="badge ${m.status==='aktiv'?'bg-':m.status==='krank'?'bw-':'br-'} li-badge" style="font-size:10px">${m.status==='aktiv'?'aktiv':m.status}</span>
+      </div>`).join('') || '<div class="empty">Keine Mitarbeiter gefunden</div>';
+    renderPagi('maPagi',data,'loadMA');
+  } catch(e) { showToast('Fehler: '+e.message,'red'); }
+}
+
+async function selectMA(id, el) {
+  document.querySelectorAll('#maList .list-item').forEach(i=>i.classList.remove('active'));
+  el?.classList.add('active');
+  const detail = document.getElementById('maDetail');
+  detail.innerHTML='<div class="loading" style="margin:auto"><div class="spinner"></div> Lade …</div>';
+  try {
+    const data = await api('/mitarbeiter/'+id);
+    selectedMA = data.mitarbeiter;
+    renderMADetail(data);
+  } catch(e) { detail.innerHTML='<div class="empty">Fehler beim Laden</div>'; }
+}
+
+function renderMADetail(data) {
+  const m = data.mitarbeiter;
+  document.getElementById('maDetail').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-toprow">
+        <div class="detail-avatar" style="background:var(--blue2);color:var(--blue-t);font-size:16px">${m.vorname[0]}${m.nachname[0]}</div>
+        <div class="detail-info">
+          <div class="detail-name">${m.nachname}, ${m.vorname}${m.handzeichen?` <span style="font-size:12px;font-weight:400;color:var(--text3);font-family:var(--mono)">(${m.handzeichen})</span>`:''}</div>
+          <div class="detail-meta">
+            <span>${qualLabel(m.qualifikation)}</span>
+            <span style="font-family:var(--mono);font-size:11px">${m.ma_nummer||'–'}</span>
+            <span class="badge ${m.status==='aktiv'?'bg-':m.status==='krank'?'bw-':'br-'}">${m.status||'aktiv'}</span>
+            ${m.ist_springer?'<span class="badge bp-">Springer</span>':''}
+            ${m.ist_pflegekraft?'<span class="badge bt-">Pflegekraft</span>':''}
+          </div>
+        </div>
+        <div class="detail-actions">
+          <button class="btn btn-sm" onclick="showToast('Stundenkonto','')">Stundenkonto</button>
+          <button class="btn btn-sm" onclick="showToast('Urlaubskonto','')">Urlaub</button>
+          <button class="btn btn-sm btn-primary" onclick="showToast('Bearbeiten','')">Bearbeiten</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar" id="maTabs">
+      <div class="tab active" onclick="switchTab('maTabs','ma-stamm',this)">Stammdaten</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-arbeitszeit',this)">Arbeitszeit</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-fahrzeuge',this)">Fahrzeuge</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-geraete',this)">Geräte</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-bemerk',this)">Bemerkungen</div>
+    </div>
+    <div id="ma-stamm" class="tab-content active">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Stammdaten</span><button class="btn btn-sm" onclick="showToast('Bearbeiten …','')">Bearbeiten</button></div><div class="sec-body">
+        <div class="form-grid">
+          <div class="fg"><span class="lbl">Handzeichen</span><input class="inp" readonly value="${m.handzeichen||'–'}"></div>
+          <div class="fg"><span class="lbl">MA-Nummer</span><input class="inp" readonly value="${m.ma_nummer||'–'}"></div>
+          <div class="fg"><span class="lbl">Vorname</span><input class="inp" readonly value="${m.vorname}"></div>
+          <div class="fg"><span class="lbl">Nachname</span><input class="inp" readonly value="${m.nachname}"></div>
+          <div class="fg"><span class="lbl">Geburtsdatum</span><input class="inp" readonly value="${m.geburtsdatum?new Date(m.geburtsdatum).toLocaleDateString('de-DE'):'–'}"></div>
+          <div class="fg"><span class="lbl">Geschlecht</span><input class="inp" readonly value="${m.geschlecht||'–'}"></div>
+          <div class="fg"><span class="lbl">Straße</span><input class="inp" readonly value="${m.strasse||'–'}"></div>
+          <div class="fg"><span class="lbl">PLZ / Ort</span><input class="inp" readonly value="${m.plz||''} ${m.ort||''}"></div>
+          <div class="fg"><span class="lbl">Handy</span><input class="inp" readonly value="${m.mobiltelefon||'–'}"></div>
+          <div class="fg"><span class="lbl">Telefon</span><input class="inp" readonly value="${m.telefon1||'–'}"></div>
+          <div class="fg"><span class="lbl">Telefax</span><input class="inp" readonly value="${m.telefax||'–'}"></div>
+          <div class="fg"><span class="lbl">E-Mail</span><input class="inp" readonly value="${m.email||'–'}"></div>
+          <div class="fg"><span class="lbl">Qualifikation</span><input class="inp" readonly value="${qualLabel(m.qualifikation)}"></div>
+          <div class="fg"><span class="lbl">Beschäftigung</span><input class="inp" readonly value="${m.beschaeftigung||'–'}"></div>
+          <div class="fg"><span class="lbl">Stunden / Woche</span><input class="inp" readonly value="${m.stunden_woche||'–'} h"></div>
+          <div class="fg"><span class="lbl">Beschäftigungsnr.</span><input class="inp" readonly value="${m.beschaeftigungsnummer||'–'}"></div>
+          <div class="fg"><span class="lbl">Bezirk</span><input class="inp" readonly value="${m.bezirk||'–'}"></div>
+          <div class="fg"><span class="lbl">Pflegeteam / WG</span><input class="inp" readonly value="${m.pflegeteam||m.wg_name||'–'}"></div>
+          <div class="fg"><span class="lbl">Eintrittsdatum</span><input class="inp" readonly value="${m.eintrittsdatum?new Date(m.eintrittsdatum).toLocaleDateString('de-DE'):'–'}"></div>
+          <div class="fg"><span class="lbl">Aktiv</span><input class="inp" readonly value="${m.aktiv?'Ja':'Nein'}"></div>
+          <div class="fg full" style="flex-direction:row;gap:12px">
+            <label class="chk-row"><input type="checkbox" ${m.aktiv?'checked':''} disabled> Aktiv</label>
+            <label class="chk-row"><input type="checkbox" ${m.ist_pflegekraft?'checked':''} disabled> Pflegekraft</label>
+            <label class="chk-row"><input type="checkbox" ${m.ist_springer?'checked':''} disabled> Springer</label>
+          </div>
+        </div>
+      </div></div>
+    </div>
+    <div id="ma-arbeitszeit" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Arbeitszeiten & Abwesenheiten</span></div><div class="sec-body">
+        ${(data.abwesenheiten||[]).length?`<table class="inline-tbl"><thead><tr><th>Typ</th><th>Von</th><th>Bis</th><th>Genehmigt</th></tr></thead><tbody>
+          ${(data.abwesenheiten||[]).map(a=>`<tr><td><span class="badge bw-">${a.typ}</span></td><td>${new Date(a.von_datum).toLocaleDateString('de-DE')}</td><td>${new Date(a.bis_datum).toLocaleDateString('de-DE')}</td><td>${a.genehmigt?'<span class="badge bg-">Ja</span>':'<span class="badge bgray-">Nein</span>'}</td></tr>`).join('')}
+        </tbody></table>`:'<div class="empty">Keine Abwesenheiten</div>'}
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <button class="btn btn-sm btn-primary" onclick="showToast('Krankmeldung erfassen','')">Krankmeldung</button>
+          <button class="btn btn-sm" onclick="showToast('Urlaub beantragen','')">Urlaub eintragen</button>
+        </div>
+      </div></div>
+    </div>
+    <div id="ma-fahrzeuge" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Fahrzeuge des Mitarbeiters</span><button class="btn btn-sm btn-primary" onclick="showToast('Fahrzeug hinzufügen','')">+ Fahrzeug</button></div><div class="sec-body">
+        ${(data.fahrzeuge||[]).length?`<table class="inline-tbl"><thead><tr><th>Kennzeichen</th><th>Fahrzeugtyp</th></tr></thead><tbody>
+          ${(data.fahrzeuge||[]).map(f=>`<tr><td><strong>${f.kennzeichen||'–'}</strong></td><td>${f.fahrzeugtyp||'–'}</td></tr>`).join('')}
+        </tbody></table>`:'<div class="empty">Keine Fahrzeuge hinterlegt</div>'}
+      </div></div>
+    </div>
+    <div id="ma-geraete" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Handys & Geräte</span><button class="btn btn-sm btn-primary" onclick="showToast('Gerät hinzufügen','')">+ Gerät</button></div><div class="sec-body">
+        ${(data.geraete||[]).length?`<table class="inline-tbl"><thead><tr><th>Geräte-Nr.</th><th>Telefon-Nr.</th><th>Typ</th></tr></thead><tbody>
+          ${(data.geraete||[]).map(g=>`<tr><td>${g.geraete_nr||'–'}</td><td>${g.telefon_nr||'–'}</td><td>${g.geraetetyp||'–'}</td></tr>`).join('')}
+        </tbody></table>`:'<div class="empty">Keine Geräte hinterlegt</div>'}
+      </div></div>
+    </div>
+    <div id="ma-bemerk" class="tab-content">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Bemerkungen</span><button class="btn btn-sm" onclick="showToast('Bearbeiten','')">Bearbeiten</button></div><div class="sec-body">
+        <div style="font-size:12px;color:var(--text2);white-space:pre-line;min-height:80px">${m.bemerkungen||'Keine Bemerkungen hinterlegt.'}</div>
+      </div></div>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════
+// TOUREN
+// ════════════════════════════════════════
+async function loadTouren(page) {
+  if(page) tourPage=page;
+  const datum=document.getElementById('tourDatumFilter')?.value||new Date().toISOString().split('T')[0];
+  const status=document.getElementById('tourStatusFilter')?.value||'';
+  const params=new URLSearchParams({page:tourPage,limit:20,datum});
+  if(status) params.append('status',status);
+  try {
+    const [data, stat] = await Promise.all([api('/touren?'+params), api('/touren/statistik?datum='+datum)]);
+    document.getElementById('tourKpis').innerHTML=`
+      <div class="stat-card ac"><div class="stat-lbl">Gesamt</div><div class="stat-val">${fmt(stat.gesamt)}</div></div>
+      <div class="stat-card bl"><div class="stat-lbl">Abgeschlossen</div><div class="stat-val">${fmt(stat.abgeschlossen)}</div></div>
+      <div class="stat-card wn"><div class="stat-lbl">Verzögert</div><div class="stat-val">${fmt(stat.verzoegert)}</div><div class="stat-delta warn">${stat.verzoegert>0?'Handeln':''}</div></div>
+      <div class="stat-card rd"><div class="stat-lbl">Offen / Unbesetzt</div><div class="stat-val">${fmt(stat.offen)}</div></div>
+    `;
+    const stMap={abgeschlossen:'<span class="badge bg-">Abgeschlossen</span>',laeuft:'<span class="badge bb-">Läuft</span>',verzoegert:'<span class="badge bw-">Verzögert</span>',offen:'<span class="badge br-">Offen</span>',geplant:'<span class="badge bgray-">Geplant</span>'};
+    document.getElementById('tourenBody').innerHTML = data.touren.map(t=>`
+      <tr onclick="showToast('Tour ${t.tour_nummer} · ${t.mitarbeiter_name||'–'}','')">
+        <td style="font-family:var(--mono);font-weight:600">${t.tour_nummer}</td>
+        <td>${t.mitarbeiter_name||'<span style="color:var(--red)">Nicht besetzt</span>'}</td>
+        <td style="font-family:var(--mono)">${t.startzeit?.substring(0,5)||'–'}</td>
+        <td>${t.patient_anzahl||0}</td>
+        <td>${t.bezirk||'–'}</td>
+        <td>${t.km_geplant||'–'}</td>
+        <td>${stMap[t.status]||t.status}</td>
+        <td><button class="btn btn-sm" onclick="event.stopPropagation();showToast('Tour bearbeiten','')">…</button></td>
+      </tr>`).join('') || '<tr><td colspan="8" class="empty">Keine Touren</td></tr>';
+    renderPagi('tourenPagi',data,'loadTouren');
+  } catch(e) { showToast('Fehler: '+e.message,'red'); }
+}
+
+// ════════════════════════════════════════
+// DIENSTPLAN (Monatskalender wie Medifox)
+// ════════════════════════════════════════
+async function loadDienstplan() {
+  const monatLabel = monatName(dpMonat)+' '+dpJahr;
+  document.getElementById('dpMonatLabel').textContent = monatLabel;
+  const erster = new Date(dpJahr, dpMonat-1, 1);
+  const letzter = new Date(dpJahr, dpMonat, 0);
+  const von = erster.toISOString().split('T')[0];
+  const bis = letzter.toISOString().split('T')[0];
+  const tage = letzter.getDate();
+  const bezId = document.getElementById('dpBezirkFilter')?.value||'';
+  const wrap = document.getElementById('dpTableWrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div> Lade Dienstplan …</div>';
+  try {
+    const [dpData, maData] = await Promise.all([
+      api(`/dienstplan?von=${von}&bis=${bis}${bezId?'&bezirk_id='+bezId:''}`),
+      api('/mitarbeiter?limit=200&status=aktiv'+(bezId?'&bezirk_id='+bezId:'')),
+    ]);
+    const wochentage=['So','Mo','Di','Mi','Do','Fr','Sa'];
+    const heute = new Date().toISOString().split('T')[0];
+    // Schichten pro MA und Datum mappen
+    const dpMap = {};
+    (dpData.dienstplan||[]).forEach(s=>{
+      const key=s.mitarbeiter_id+'_'+s.datum;
+      if(!dpMap[key]) dpMap[key]=[];
+      dpMap[key].push(s);
+    });
+    // Besetzung pro Tag
+    const besetzung={f:{},s:{},n:{}};
+    (dpData.dienstplan||[]).forEach(s=>{
+      const sch=(s.schicht_kuerzel||s.schicht||'').toLowerCase();
+      if(sch.startsWith('f')){besetzung.f[s.datum]=(besetzung.f[s.datum]||0)+1;}
+      else if(sch.startsWith('s')){besetzung.s[s.datum]=(besetzung.s[s.datum]||0)+1;}
+      else if(sch.startsWith('n')){besetzung.n[s.datum]=(besetzung.n[s.datum]||0)+1;}
+    });
+    // Tabelle aufbauen
+    let html=`<table class="dp-table"><thead><tr>
+      <th class="col-name">Mitarbeiter</th>
+      <th class="col-soll">Soll</th>`;
+    for(let t=1;t<=tage;t++){
+      const d=new Date(dpJahr,dpMonat-1,t);
+      const ds=`${dpJahr}-${String(dpMonat).padStart(2,'0')}-${String(t).padStart(2,'0')}`;
+      const wd=wochentage[d.getDay()];
+      const isWE=d.getDay()===0||d.getDay()===6;
+      const isHeute=ds===heute;
+      html+=`<th class="${isHeute?'dp-today':''}" style="${isWE?'color:var(--text3)':''}">${t}<br><span style="font-size:9px">${wd}</span></th>`;
+    }
+    html+=`<th class="col-rest">Rest</th></tr></thead><tbody>`;
+    // Mitarbeiter-Zeilen
+    (maData.mitarbeiter||[]).forEach(m=>{
+      let stSoll=0, stIst=0;
+      for(let t=1;t<=tage;t++){
+        const ds=`${dpJahr}-${String(dpMonat).padStart(2,'0')}-${String(t).padStart(2,'0')}`;
+        const shifts=dpMap[m.id+'_'+ds]||[];
+        shifts.forEach(s=>{ stSoll+=(parseFloat(s.stunden_soll)||0); stIst+=(parseFloat(s.stunden_ist)||0); });
+      }
+      const rest=stSoll-(m.stunden_woche||38.5)*4.33;
+      html+=`<tr>
+        <td class="col-name">
+          <div class="dp-ma-name">${m.nachname}, ${m.vorname}</div>
+          <div class="dp-ma-qual">${qualLabel(m.qualifikation)}</div>
+          <div class="dp-ma-std">${(m.stunden_woche||38.5).toFixed(2)} pro Woche</div>
+        </td>
+        <td class="col-soll">${stSoll.toFixed(2)}</td>`;
+      for(let t=1;t<=tage;t++){
+        const d=new Date(dpJahr,dpMonat-1,t);
+        const ds=`${dpJahr}-${String(dpMonat).padStart(2,'0')}-${String(t).padStart(2,'0')}`;
+        const isHeute=ds===heute;
+        const isWE=d.getDay()===0||d.getDay()===6;
+        const shifts=dpMap[m.id+'_'+ds]||[];
+        const chips=shifts.map(s=>{
+          const k=(s.schicht_kuerzel||s.schicht||'?').toUpperCase();
+          const css=k==='X'?'x':k.startsWith('F')?'f':k.startsWith('S')?'s':k.startsWith('N')?'n':k==='K'?'k':k==='U'?'u':'';
+          return `<span class="dp-chip ${css}" onclick="showToast('${m.vorname}: ${k}','') " title="${s.beginn||''}-${s.ende||''}">${k}</span>`;
+        }).join('');
+        html+=`<td class="${isHeute?'dp-today':''} ${isWE?'dp-weekend':''}" onclick="dpCellClick('${m.id}','${ds}')">
+          ${chips||`<span class="dp-chip empty" onclick="event.stopPropagation();dpCellClick('${m.id}','${ds}')">+</span>`}
+        </td>`;
+      }
+      const restFmt=Math.abs(rest).toFixed(2);
+      html+=`<td class="col-rest ${rest<0?'neg':rest>0?'pos':''}">${rest<0?'-':rest>0?'+':''}${restFmt}</td></tr>`;
+    });
+    // Besetzungszeilen
+    html+=`<tr class="dp-besetzung-row"><td class="dp-besetzung-lbl">F Frühdienst</td><td></td>`;
+    for(let t=1;t<=tage;t++){const ds=`${dpJahr}-${String(dpMonat).padStart(2,'0')}-${String(t).padStart(2,'0')}`;html+=`<td class="dp-besetzung-num dp-besetzung-f">${besetzung.f[ds]||0}</td>`;}
+    html+=`<td></td></tr>`;
+    html+=`<tr class="dp-besetzung-row"><td class="dp-besetzung-lbl">S Spätdienst</td><td></td>`;
+    for(let t=1;t<=tage;t++){const ds=`${dpJahr}-${String(dpMonat).padStart(2,'0')}-${String(t).padStart(2,'0')}`;html+=`<td class="dp-besetzung-num dp-besetzung-s">${besetzung.s[ds]||0}</td>`;}
+    html+=`<td></td></tr>`;
+    html+=`<tr class="dp-besetzung-row"><td class="dp-besetzung-lbl">N Nachtdienst</td><td></td>`;
+    for(let t=1;t<=tage;t++){const ds=`${dpJahr}-${String(dpMonat).padStart(2,'0')}-${String(t).padStart(2,'0')}`;html+=`<td class="dp-besetzung-num dp-besetzung-n">${besetzung.n[ds]||0}</td>`;}
+    html+=`<td></td></tr>`;
+    html+=`</tbody></table>`;
+    wrap.innerHTML=html;
+  } catch(e) { wrap.innerHTML=`<div class="empty">Fehler: ${e.message}</div>`; }
+}
+
+function changeMonth(d) { dpMonat+=d; if(dpMonat>12){dpMonat=1;dpJahr++;}else if(dpMonat<1){dpMonat=12;dpJahr--;} loadDienstplan(); }
+
+function dpCellClick(maId, datum) {
+  const kuerzel = prompt(`Schicht für ${datum}:\n\nF12 = Frühdienst, S2 = Spätdienst, N = Nacht, K = Küche, U = Urlaub, X = Krank\n\nKürzel eingeben:`);
+  if(!kuerzel) return;
+  api('/dienstplan', {method:'POST', body:JSON.stringify([{mitarbeiter_id:maId,datum,schicht_kuerzel:kuerzel.toUpperCase(),beginn:null,ende:null}])})
+    .then(()=>{showToast('Schicht eingetragen','green');loadDienstplan();})
+    .catch(e=>showToast('Fehler: '+e.message,'red'));
+}
+
+async function genDP() {
+  const von=document.getElementById('dpg_von').value;
+  const bis=document.getElementById('dpg_bis').value;
+  if(!von||!bis){showToast('Datum fehlt','red');return;}
+  try {
+    const data = await api('/dienstplan/generieren',{method:'POST',body:JSON.stringify({von,bis,min_frueh:document.getElementById('dpg_f').value,min_spaet:document.getElementById('dpg_s').value,min_nacht:document.getElementById('dpg_n').value,bezirk_id:document.getElementById('dpg_bez').value||null})});
+    closeModal('modal-dp-generator');
+    showToast(`${data.generiert} Schichten generiert`,'green');
+    loadDienstplan();
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+// ════════════════════════════════════════
+// ZEITERFASSUNG
+// ════════════════════════════════════════
+async function loadZeiterfassung() {
+  const datum = document.getElementById('zeDatum')?.value||new Date().toISOString().split('T')[0];
+  try {
+    const maData = await api('/mitarbeiter?limit=200&status=aktiv');
+    const ma = maData.mitarbeiter||[];
+    document.getElementById('zeKpis').innerHTML=`
+      <div class="stat-card ac"><div class="stat-lbl">MA gesamt</div><div class="stat-val">${ma.length}</div></div>
+      <div class="stat-card bl"><div class="stat-lbl">Im Dienst heute</div><div class="stat-val">–</div></div>
+      <div class="stat-card wn"><div class="stat-lbl">Überstunden</div><div class="stat-val">–</div></div>
+    `;
+    const grid = document.getElementById('zeGrid');
+    grid.innerHTML = ma.slice(0,24).map(m=>{
+      const soll = parseFloat(m.stunden_woche||38.5)/5;
+      const pct = Math.min(100, Math.round(Math.random()*120));
+      const fillClass = pct>110?'red':pct>100?'warn':'';
+      return `<div class="ze-card">
+        <div class="ze-name">${m.nachname}, ${m.vorname}${m.handzeichen?` <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">(${m.handzeichen})</span>`:''}</div>
+        <div class="ze-qual">${qualLabel(m.qualifikation)}</div>
+        <div class="ze-bar"><div class="ze-fill ${fillClass}" style="width:${pct}%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);font-family:var(--mono)">
+          <span>0:00 / ${soll.toFixed(2)}h</span>
+          <span>${pct}%</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+// ════════════════════════════════════════
+// DOKUMENTATION
+// ════════════════════════════════════════
+async function loadDoku(page) {
+  if(page) dokuPage=page;
+  const typ=document.getElementById('dokuTypFilter')?.value||'';
+  const status=document.getElementById('dokuStatusFilter')?.value||'';
+  const params=new URLSearchParams({page:dokuPage,limit:20});
+  if(typ) params.append('typ',typ);
+  if(status) params.append('status',status);
+  try {
+    const [data,q] = await Promise.all([api('/dokumentation?'+params), api('/dokumentation/quote').catch(()=>null)]);
+    document.getElementById('dokuKpis').innerHTML=`
+      <div class="stat-card wn"><div class="stat-lbl">Offen</div><div class="stat-val">${q?.offen||0}</div></div>
+      <div class="stat-card rd"><div class="stat-lbl">Überfällig</div><div class="stat-val">${q?.ueberfaellig||0}</div></div>
+      <div class="stat-card ac"><div class="stat-lbl">Fertig</div><div class="stat-val">${q?.fertig||0}</div></div>
+      <div class="stat-card bl"><div class="stat-lbl">Heute</div><div class="stat-val">${q?.heute||0}</div></div>
+    `;
+    document.getElementById('dokuBody').innerHTML = data.dokumentationen.map(d=>`
+      <tr onclick="showToast('${d.patient_name||'–'} · ${dokuTypLabel(d.typ)}','')">
+        <td><strong>${d.patient_name||'–'}</strong></td>
+        <td><span class="badge bgray-">${dokuTypLabel(d.typ)}</span></td>
+        <td>${d.ma_name||'–'}</td>
+        <td style="font-family:var(--mono);font-size:11px">${new Date(d.erstellt_am).toLocaleDateString('de-DE')}</td>
+        <td><span class="badge ${dokuStatusClass(d.status)}">${d.status}</span></td>
+        <td><button class="btn btn-sm" onclick="event.stopPropagation();showToast('Öffnen','')">Öffnen</button></td>
+      </tr>`).join('') || '<tr><td colspan="6" class="empty">Keine Dokumentationen</td></tr>';
+    renderPagi('dokuPagi',data,'loadDoku');
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+// ════════════════════════════════════════
+// ABRECHNUNG
+// ════════════════════════════════════════
+async function loadAbrKlienten() {
+  const suche=document.getElementById('abrSearch')?.value||'';
+  const params=new URLSearchParams({limit:50,aktiv:'true'});
+  if(suche) params.append('suche',suche);
+  try {
+    const data = await api('/patienten?'+params);
+    document.getElementById('abrKlientCount').textContent=data.gesamt;
+    document.getElementById('abrKlientList').innerHTML = data.patienten.map(p=>`
+      <div class="list-item" onclick="selectAbrKlient('${p.id}','${p.vorname}','${p.nachname}',this)">
+        <div class="li-av" style="background:var(--blue2);color:var(--blue-t)">${p.vorname[0]}${p.nachname[0]}</div>
+        <div class="li-info">
+          <div class="li-name">${p.nachname}, ${p.vorname}</div>
+          <div class="li-sub">${p.pat_nummer||'–'} · PG ${p.pflegegrad}</div>
+        </div>
+      </div>`).join('');
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+async function selectAbrKlient(id, vn, nn, el) {
+  document.querySelectorAll('#abrKlientList .list-item').forEach(i=>i.classList.remove('active'));
+  el?.classList.add('active');
+  const detail = document.getElementById('abrDetail');
+  detail.innerHTML='<div class="loading" style="margin:auto"><div class="spinner"></div></div>';
+  try {
+    const data = await api('/patienten/'+id);
+    const p=data.patient;
+    const heute=new Date();
+    const monName=heute.toLocaleDateString('de-DE',{month:'long',year:'numeric'});
+    detail.innerHTML=`
+      <div class="detail-header">
+        <div class="detail-toprow">
+          <div class="detail-avatar" style="background:var(--blue2);color:var(--blue-t)">${vn[0]}${nn[0]}</div>
+          <div class="detail-info">
+            <div class="detail-name">Klient: ${nn}, ${vn}</div>
+            <div class="detail-meta">
+              <span>Klienten-Nr.: ${p.pat_nummer||'–'}</span>
+              <span>Pflegegrad: ${p.pflegegrad}</span>
+              <span>Geb.-Datum: ${p.geburtsdatum?new Date(p.geburtsdatum).toLocaleDateString('de-DE'):'–'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:14px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:14px;font-weight:600">Abrechnung der Leistungen</div>
+          <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+            <span style="font-size:12px;color:var(--text2)">Monat:</span>
+            <button class="btn btn-sm">&#8249;</button>
+            <span style="font-size:12px;font-weight:600">${monName}</span>
+            <button class="btn btn-sm">&#8250;</button>
+          </div>
+        </div>
+        <div class="sec"><div class="sec-header"><span class="sec-title">Vorhandene Aufträge des Klienten</span><button class="btn btn-sm btn-primary" onclick="showToast('Einsätze/Leistungen bearbeiten','')">Einsätze/Leistungen</button></div><div class="sec-body">
+          ${(data.leistungsauftraege||[]).length?`<table class="inline-tbl"><thead><tr><th>S</th><th style="width:20px">Bear.</th><th>Leistungsgrundlage</th><th>Beleg-Nr.</th><th>Von</th><th>Bis</th><th>Bearbeitungsstand</th><th>Bearb.</th><th>Gedr.</th><th>Unterschrift</th></tr></thead><tbody>
+            ${(data.leistungsauftraege||[]).map(l=>`<tr>
+              <td><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16"/><path d="M14 2v6h6"/></svg></td>
+              <td><input type="checkbox" ${l.aktiv?'checked':''}></td>
+              <td style="font-size:12px">${sgbLabel(l.leistungsgrundlage)}</td>
+              <td style="font-family:var(--mono);font-size:11px">${l.beleg_nr||'–'}</td>
+              <td style="font-family:var(--mono);font-size:11px">${l.von_datum?new Date(l.von_datum).toLocaleDateString('de-DE'):'–'}</td>
+              <td style="font-family:var(--mono);font-size:11px">${l.bis_datum?new Date(l.bis_datum).toLocaleDateString('de-DE'):'–'}</td>
+              <td style="font-size:11px;color:var(--text2)">${l.bearbeitungsstand||'–'}</td>
+              <td><input type="checkbox"></td><td><input type="checkbox"></td><td></td>
+            </tr>`).join('')}
+          </tbody></table>`:'<div class="empty">Keine Leistungsaufträge vorhanden — bitte anlegen</div>'}
+          <div style="margin-top:8px;display:flex;gap:6px">
+            <button class="btn btn-sm btn-blue" onclick="showToast('Rechnungen erstellen','')">Rechnungen erstellen</button>
+            <button class="btn btn-sm" onclick="showToast('Kostenaufteilung','')">Kostenaufteilung</button>
+            <button class="btn btn-sm" onclick="showToast('Genehmigung','')">Genehmigung</button>
+          </div>
+        </div></div>
+        <div class="sec"><div class="sec-header"><span class="sec-title">Rechnungen zu den Aufträgen</span></div><div class="sec-body">
+          ${(data.abrechnungen||[]).length?`<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Zum Auswählen klicken. Dann Vorschau oder Drucken.</div>
+          ${(data.abrechnungen||[]).map(a=>`
+            <div class="abr-rech-row">
+              <input type="checkbox" checked>
+              <span class="abr-sgb ${sGbClass(a.sgb_typ)}">${sgbKurz(a.sgb_typ)}</span>
+              <span>${a.kostentraeger_name||'–'}</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${a.beleg_nr||'–'}</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${a.anteil_prozent||100}</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${a.anteil_prozent||100}%</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${a.rechnung_datum?new Date(a.rechnung_datum).toLocaleDateString('de-DE'):'–'}</span>
+              <span class="abr-betrag">€ ${parseFloat(a.gesamtbetrag||0).toFixed(2)}</span>
+            </div>`).join('')}`:'<div class="empty">Keine Rechnungen vorhanden</div>'}
+          <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <button class="btn btn-sm" onclick="showToast('Vorschau …','')">Vorschau</button>
+            <button class="btn btn-sm btn-blue" onclick="showToast('Drucken …','')">Drucken</button>
+            <label class="chk-row" style="font-size:11px"><input type="checkbox" checked> Rechnungen</label>
+            <label class="chk-row" style="font-size:11px"><input type="checkbox"> Leistungsnachweis</label>
+            <label class="chk-row" style="font-size:11px"><input type="checkbox"> Lastschrift</label>
+            <label class="chk-row" style="font-size:11px"><input type="checkbox"> Überweisungsträger</label>
+          </div>
+        </div></div>
+      </div>
+    `;
+  } catch(e){detail.innerHTML='<div class="empty">Fehler beim Laden</div>';}
+}
+
+// ════════════════════════════════════════
+// STATISTIK
+// ════════════════════════════════════════
+async function loadStatistik() {
+  try {
+    const [dash,patStat,abrJahr] = await Promise.all([
+      api('/dashboard'),
+      api('/patienten/statistik'),
+      api('/abrechnung/jahr').catch(()=>({monate:[]})),
+    ]);
+    const p=dash.patienten,m=dash.mitarbeiter,a=dash.abrechnung;
+    document.getElementById('statKpis').innerHTML=`
+      <div class="stat-card ac"><div class="stat-lbl">Klienten gesamt</div><div class="stat-val">${fmt(p?.aktiv)}</div><div class="stat-delta">↑ ${p?.neu||0} neu</div></div>
+      <div class="stat-card bl"><div class="stat-lbl">Mitarbeiter</div><div class="stat-val">${fmt(m?.gesamt)}</div></div>
+      <div class="stat-card wn"><div class="stat-lbl">Abgerechnet (Monat)</div><div class="stat-val">${fmtEur(a?.abgerechnet)}</div></div>
+      <div class="stat-card tl"><div class="stat-lbl">Offen (Monat)</div><div class="stat-val">${fmtEur(a?.offen)}</div></div>
+    `;
+    // Nach Pflegegrad
+    document.getElementById('statPG').innerHTML=(patStat.nach_pflegegrad||[]).map(r=>`
+      <div class="prog-row">
+        <div class="prog-meta"><span>Pflegegrad ${r.pflegegrad}</span><span>${r.anzahl}</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${patStat.gesamt?Math.round(r.anzahl/patStat.gesamt*100):0}%"></div></div>
+      </div>`).join('') || '<div class="empty">Keine Daten</div>';
+    // Nach Bezirk
+    document.getElementById('statMA').innerHTML=(patStat.nach_bezirk||[]).map(r=>`
+      <div class="prog-row">
+        <div class="prog-meta"><span>${r.bezirk}</span><span>${r.anzahl}</span></div>
+        <div class="prog-bar"><div class="prog-fill pf-blue" style="width:${patStat.gesamt?Math.round(r.anzahl/patStat.gesamt*100):0}%"></div></div>
+      </div>`).join('') || '<div class="empty">Keine Daten</div>';
+    // Abrechnung
+    document.getElementById('statAbr').innerHTML=`
+      <div class="prog-row"><div class="prog-meta"><span>SGB XI (Pflegeleistungen)</span><span>${fmtEur(a?.abgerechnet)}</span></div><div class="prog-bar"><div class="prog-fill" style="width:70%"></div></div></div>
+      <div class="prog-row"><div class="prog-meta"><span>SGB V (Behandlungspflege)</span><span>–</span></div><div class="prog-bar"><div class="prog-fill pf-blue" style="width:40%"></div></div></div>
+      <div class="prog-row"><div class="prog-meta"><span>WG-Betreuung</span><span>–</span></div><div class="prog-bar"><div class="prog-fill" style="width:25%;background:var(--purple)"></div></div></div>
+    `;
+    document.getElementById('statDoku').innerHTML=`
+      <div class="prog-row"><div class="prog-meta"><span>SIS-Berichte</span><span>–%</span></div><div class="prog-bar"><div class="prog-fill" style="width:91%"></div></div></div>
+      <div class="prog-row"><div class="prog-meta"><span>Leistungsnachweise</span><span>–%</span></div><div class="prog-bar"><div class="prog-fill" style="width:96%"></div></div></div>
+      <div class="prog-row"><div class="prog-meta"><span>Pflegeberichte</span><span>–%</span></div><div class="prog-bar"><div class="prog-fill pf-warn" style="width:74%"></div></div></div>
+    `;
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+// ════════════════════════════════════════
+// EINSTELLUNGEN
+// ════════════════════════════════════════
+async function loadEinstellungen() {
+  try {
+    const [users, wg] = await Promise.all([
+      api('/benutzer').catch(()=>({benutzer:[]})),
+      api('/wohngemeinschaften'),
+    ]);
+    const rolleLabel={admin:'Administrator',geschaeftsfuehrung:'Geschäftsführung',stationsleitung:'Stationsleitung',pflegekraft:'Pflegekraft',verwaltung:'Verwaltung',buchhaltung:'Buchhaltung'};
+    document.getElementById('userList').innerHTML=`<table class="inline-tbl"><thead><tr><th>Name</th><th>E-Mail</th><th>Rolle</th><th>Status</th><th></th></tr></thead><tbody>
+      ${(users.benutzer||[]).map(u=>`<tr><td><strong>${u.nachname}, ${u.vorname}</strong></td><td style="font-size:11px;color:var(--text2)">${u.email}</td><td><span class="badge bgray-">${rolleLabel[u.rolle]||u.rolle}</span></td><td><span class="badge ${u.aktiv?'bg-':'br-'}">${u.aktiv?'Aktiv':'Gesperrt'}</span></td><td><button class="btn btn-sm" onclick="showToast('PW zurücksetzen','')">PW reset</button></td></tr>`).join('')}
+    </tbody></table>`;
+    document.getElementById('wgList').innerHTML=`<table class="inline-tbl"><thead><tr><th>Name</th><th>Bezirk</th><th>Belegung</th><th>Pauschale</th></tr></thead><tbody>
+      ${(wg.wgs||[]).map(w=>`<tr><td><strong>${w.name}</strong></td><td>${w.bezirk||'–'}</td><td>${w.bewohner_aktuell||0}/${w.kapazitaet}</td><td style="font-family:var(--mono)">€ ${w.monatspauschale||0}</td></tr>`).join('')}
+    </tbody></table>`;
+    document.getElementById('ktList').innerHTML='<div class="empty">Kostenträger werden geladen …</div>';
+    api('/kostentraeger').then(kt=>{
+      document.getElementById('ktList').innerHTML=`<table class="inline-tbl"><thead><tr><th>Name</th><th>Typ</th><th>IK-Nr.</th><th>Telefon</th></tr></thead><tbody>
+        ${(kt.kostentraeger||[]).map(k=>`<tr><td><strong>${k.name}</strong></td><td><span class="badge bgray-">${k.typ}</span></td><td style="font-family:var(--mono);font-size:11px">${k.ik_nummer||'–'}</td><td>${k.telefon||'–'}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">Keine Kostenträger</td></tr>'}
+      </tbody></table>`;
+    }).catch(()=>{document.getElementById('ktList').innerHTML='<div class="empty">Keine Zugangsberechtigung</div>';});
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+// ════════════════════════════════════════
+// SPEICHERN FUNKTIONEN
+// ════════════════════════════════════════
+async function saveKlient() {
+  try {
+    await api('/patienten',{method:'POST',body:JSON.stringify({
+      vorname:document.getElementById('kn_vn').value,
+      nachname:document.getElementById('kn_nn').value,
+      geburtsdatum:document.getElementById('kn_geb').value,
+      titel:document.getElementById('kn_titel').value||null,
+      geburtsname:document.getElementById('kn_gbname').value||null,
+      geschlecht:document.getElementById('kn_gesch').value||null,
+      pflegegrad:document.getElementById('kn_pg').value,
+      strasse:document.getElementById('kn_str').value,
+      adresszusatz:document.getElementById('kn_zusatz').value,
+      plz:document.getElementById('kn_plz').value,
+      ort:document.getElementById('kn_ort').value,
+      telefon1:document.getElementById('kn_tel1').value,
+      telefon2:document.getElementById('kn_tel2').value,
+      mobiltelefon:document.getElementById('kn_mobil').value,
+      email:document.getElementById('kn_email').value,
+      versicherungsnr:document.getElementById('kn_vnr').value,
+      versicherungsstatus:document.getElementById('kn_vstatus').value,
+      aktenzeichen:document.getElementById('kn_az').value,
+      schluessel_nr:document.getElementById('kn_schl').value,
+      apotheke:document.getElementById('kn_apoth').value,
+      bezirk_id:document.getElementById('kn_bez').value||null,
+      sgb_xi_37_3:document.getElementById('kn_37_3').checked,
+      hausnotruf:document.getElementById('kn_hausnotruf').checked,
+      entlastungsbetrag_45b:document.getElementById('kn_45b').checked,
+      sgb_xi_36:document.getElementById('kn_36').checked,
+    })});
+    closeModal('modal-klient-neu');
+    showToast('Klient erfolgreich aufgenommen','green');
+    loadKlienten();
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+async function saveMA() {
+  try {
+    await api('/mitarbeiter',{method:'POST',body:JSON.stringify({
+      vorname:document.getElementById('ma_vn').value,
+      nachname:document.getElementById('ma_nn').value,
+      handzeichen:document.getElementById('ma_hz').value.toUpperCase()||null,
+      geburtsdatum:document.getElementById('ma_geb').value||null,
+      geschlecht:document.getElementById('ma_gesch').value||null,
+      qualifikation:document.getElementById('ma_qual').value,
+      beschaeftigung:document.getElementById('ma_besch').value,
+      stunden_woche:parseFloat(document.getElementById('ma_std').value)||38.5,
+      beschaeftigungsnummer:document.getElementById('ma_beschnr').value||null,
+      ist_pflegekraft:document.getElementById('ma_pflegekraft').checked,
+      ist_springer:document.getElementById('ma_springer').checked,
+      strasse:document.getElementById('ma_str').value,
+      plz:document.getElementById('ma_plz').value,
+      ort:document.getElementById('ma_ort').value,
+      telefon1:document.getElementById('ma_tel1').value,
+      mobiltelefon:document.getElementById('ma_mobil').value,
+      email:document.getElementById('ma_email').value,
+      bezirk_id:document.getElementById('ma_bez').value||null,
+      wg_id:document.getElementById('ma_wg').value||null,
+      eintrittsdatum:document.getElementById('ma_eintritt').value||null,
+    })});
+    closeModal('modal-ma-neu');
+    showToast('Mitarbeiter angelegt','green');
+    loadMA();
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+async function saveTour() {
+  try {
+    await api('/touren',{method:'POST',body:JSON.stringify({datum:document.getElementById('tn_datum').value,startzeit:document.getElementById('tn_start').value,bezirk_id:document.getElementById('tn_bez').value||null,fahrzeug:document.getElementById('tn_fz').value,notizen:document.getElementById('tn_notiz').value})});
+    closeModal('modal-tour-neu');showToast('Tour angelegt','green');loadTouren();
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+async function saveDoku() {
+  try {
+    await api('/dokumentation',{method:'POST',body:JSON.stringify({typ:document.getElementById('dn_typ').value,inhalt:document.getElementById('dn_inhalt').value,mitarbeiter_id:user?.id})});
+    closeModal('modal-doku-neu');showToast('Dokumentation gespeichert','green');loadDoku();
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+async function saveUser() {
+  try {
+    await api('/auth/register',{method:'POST',body:JSON.stringify({email:document.getElementById('un_email').value,passwort:document.getElementById('un_pw').value,vorname:document.getElementById('un_vn').value,nachname:document.getElementById('un_nn').value,rolle:document.getElementById('un_rolle').value})});
+    closeModal('modal-user-neu');showToast('Benutzer angelegt — Login: '+document.getElementById('un_email').value,'green');loadEinstellungen();
+  } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+async function saveWG() {
+  const adr=(document.getElementById('wg_adr').value||'').split(',');
+  await api('/wohngemeinschaften',{method:'POST',body:JSON.stringify({name:document.getElementById('wg_name').value,kuerzel:document.getElementById('wg_kuerzel').value,kapazitaet:parseInt(document.getElementById('wg_kap').value)||12,monatspauschale:parseFloat(document.getElementById('wg_pau').value)||0,bezirk_id:document.getElementById('wg_bez').value||null})})
+    .then(()=>{closeModal('modal-wg-neu');showToast('WG angelegt','green');loadEinstellungen();})
+    .catch(e=>showToast('Fehler: '+e.message,'red'));
+}
+
+async function saveKT() {
+  await api('/kostentraeger',{method:'POST',body:JSON.stringify({name:document.getElementById('kt_name').value,kuerzel:document.getElementById('kt_kuerzel').value,typ:document.getElementById('kt_typ').value,ik_nummer:document.getElementById('kt_ik').value,telefon:document.getElementById('kt_tel').value})})
+    .then(()=>{closeModal('modal-kt-neu');showToast('Kostenträger angelegt','green');loadEinstellungen();})
+    .catch(e=>showToast('Fehler: '+e.message,'red'));
+}
+
+// ════════════════════════════════════════
+// HILFSFUNKTIONEN
+// ════════════════════════════════════════
+function fmt(n){if(n===null||n===undefined)return'–';return parseInt(n).toLocaleString('de-DE');}
+function fmtEur(n){if(!n||n==0||n=='0')return'€ 0';const v=parseFloat(n);if(v>=1000000)return'€ '+(v/1000000).toFixed(1)+' Mio';if(v>=1000)return'€ '+(v/1000).toFixed(0)+'k';return'€ '+v.toFixed(0);}
+function pgBg(pg){return{'1':'#DCFCE7','2':'#DCFCE7','3':'#FEF3C7','4':'#DBEAFE','5':'#FEE2E2'}[pg]||'#F4F4F5';}
+function pgColor2(pg){return{'1':'#14532D','2':'#14532D','3':'#78350F','4':'#1E3A8A','5':'#7F1D1D'}[pg]||'#3F3F46';}
+function qualLabel(q){return{'examiniert_3j':'Altenpfleger/in','pflegehelfer':'Pflegehelfer/in','hilfskraft':'Hilfskraft','auszubildender':'Auszubildende/r','aushilfe':'Aushilfe','wundmanager':'Wundmanager/in','palliativ':'Palliativpflege','stationsleitung':'Stationsleitung','verwaltung':'Verwaltung','apothekenfahrer':'Apothekenfahrer','tagespflegefahrer':'Tagespflegefahrer','kuechenhilfe':'Küchenhilfe'}[q]||q||'–';}
+function monatName(m){return['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][m-1]||'';}
+function sgbLabel(t){return{'sgb_xi_36':'§ 36 SGB XI – Pflegeversicherungsleistungen','sgb_xi_37':'§ 37 SGB XI – Pflegegeld','sgb_xi_38':'§ 38 SGB XI','sgb_xi_45b':'§ 45b SGB XI – Entlastungsbetrag','sgb_v_37_2':'§ 37.2 SGB V – Behandlungspflege','wg_betreuung':'WG-Betreuung','verhinderung':'Verhinderungspflege','nachtpflege':'Nachtpflege','entlastungsbetrag':'Entlastungsbetrag','privat':'Privatleistung'}[t]||t||'–';}
+function sgbKurz(t){return{'sgb_xi_36':'§ 36','sgb_xi_37':'§ 37','sgb_xi_45b':'§ 45b','sgb_v_37_2':'§ 37.2','wg_betreuung':'WG','verhinderung':'Verh.','nachtpflege':'Nacht','privat':'Priv.'}[t]||t||'–';}
+function sGbClass(t){if(t?.includes('xi'))return'badge bb-';if(t?.includes('v_'))return'badge bp-';if(t==='privat')return'badge bgray-';return'badge bt-';}
+function dokuTypLabel(t){return{'sis':'SIS-Bericht','leistungsnachweis':'Leistungsnachweis','pflegebericht':'Pflegebericht','wundprotokoll':'Wundprotokoll','medikamentennachweis':'Medi-Nachweis','sturzprotokoll':'Sturzprotokoll','pflegeanamnese':'Pflegeanamnese','massnahmenplan':'Maßnahmenplan'}[t]||t||'–';}
+function dokuStatusClass(s){return{fertig:'badge bg-',entwurf:'badge bw-',ueberfaellig:'badge br-'}[s]||'badge bgray-';}
+
+// Tabs
+function switchTab(barId,contentId,el){
+  const bar=document.getElementById(barId);
+  bar.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  // Content IDs: alle tab-content im gleichen Container deaktivieren
+  const container=bar.nextElementSibling?.parentElement||bar.parentElement;
+  container.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById(contentId)?.classList.add('active');
+}
+
+// Modal
+function openModal(id){document.getElementById(id)?.classList.add('open');}
+function closeModal(id){document.getElementById(id)?.classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));});
+
+// Toast
+let _tt;
+function showToast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'');void t.offsetWidth;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
+
+// Pagination
+function renderPagi(elId,data,fn){
+  const el=document.getElementById(elId);if(!el)return;
+  if(data.seiten<=1){el.innerHTML='';return;}
+  let h=`<span class="pg-info">${data.gesamt} Einträge</span>`;
+  if(data.seite>1)h+=`<button class="pg-btn" onclick="${fn}(${data.seite-1})">‹</button>`;
+  const s=Math.max(1,data.seite-2),e=Math.min(data.seiten,data.seite+2);
+  for(let p=s;p<=e;p++)h+=`<button class="pg-btn${p===data.seite?' active':''}" onclick="${fn}(${p})">${p}</button>`;
+  if(data.seite<data.seiten)h+=`<button class="pg-btn" onclick="${fn}(${data.seite+1})">›</button>`;
+  h+=`<span class="pg-info">/ ${data.seiten}</span>`;
+  el.innerHTML=h;
+}
+
+// Debounce
+function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms);};}
+
+// Globale Suche
+let _gs;
+function doSearch(q){
+  clearTimeout(_gs);
+  _gs=setTimeout(async()=>{
+    if(q.length<2)return;
+    const d=await api('/patienten?suche='+encodeURIComponent(q)+'&limit=1').catch(()=>null);
+    if(d?.gesamt>0){showPage('klienten',document.getElementById('nav-klienten'));document.getElementById('klientSearch').value=q;klientPage=1;loadKlienten();}
+  },400);
+}
+</script>
+</body>
+</html>
