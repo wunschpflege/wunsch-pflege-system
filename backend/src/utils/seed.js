@@ -195,4 +195,4 @@ async function seed() {
   console.log('╚══════════════════════════════════════════╝');
   // fertig
 }
-seed().catch(e => { console.error(e); // fehler });
+require('./migrate').migrate().then(() => seed()).catch(console.error);
