@@ -355,6 +355,10 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       <span class="nav-lbl">Klienten</span>
       <span class="nav-badge" id="badge-klienten">–</span>
     </div>
+    <div class="nav-item" onclick="showPage('adressen',this)" id="nav-adressen" title="Allgemeine Adressen">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span class="nav-lbl">Adressen</span>
+    </div>
     <div class="nav-item" onclick="showPage('mitarbeiter',this)" id="nav-mitarbeiter" title="Mitarbeiter">
       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span class="nav-lbl">Mitarbeiter</span>
@@ -461,6 +465,41 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         <!-- Detail -->
         <div class="split-detail" id="klientDetail">
           <div class="empty" style="margin:auto">Klient auswählen</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ALLGEMEINE ADRESSEN ══ -->
+    <div class="page" id="page-adressen">
+      <div class="split-layout">
+        <div class="split-list">
+          <div class="list-header">
+            <div class="list-title">Allgemeine Adressen <span class="list-count" id="adrCount">–</span></div>
+            <div class="list-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="adrSearch" placeholder="Name, Firma, Typ …" oninput="debounce(loadAdressen,400)()">
+            </div>
+            <div style="display:flex;gap:4px;margin-top:6px">
+              <select id="adrTypFilter" onchange="loadAdressen()" style="flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:var(--bg);color:var(--text2);font-family:var(--font)">
+                <option value="">Alle Typen</option>
+                <option value="arzt">Arzt / Ärztin</option>
+                <option value="krankenhaus">Krankenhaus</option>
+                <option value="apotheke">Apotheke</option>
+                <option value="kostentraeger">Kostenträger</option>
+                <option value="behoerde">Behörde</option>
+                <option value="lieferant">Lieferant</option>
+                <option value="sonstiges">Sonstiges</option>
+              </select>
+            </div>
+          </div>
+          <div class="list-items" id="adrList"><div class="loading"><div class="spinner"></div></div></div>
+          <div class="pagi" id="adrPagi"></div>
+          <div style="padding:8px;border-top:1px solid var(--border)">
+            <button class="btn btn-primary" style="width:100%" onclick="openModal('modal-adr-neu')">+ Neue Adresse</button>
+          </div>
+        </div>
+        <div class="split-detail" id="adrDetail">
+          <div class="empty" style="margin:auto">Adresse auswählen</div>
         </div>
       </div>
     </div>
@@ -667,6 +706,36 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 </div>
 
 <!-- ══ MODALS ══ -->
+
+<!-- Adresse neu -->
+<div class="modal-overlay" id="modal-adr-neu">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Neue Adresse anlegen</div><button class="modal-close" onclick="closeModal('modal-adr-neu')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg"><span class="lbl">Typ *</span><select class="sel" id="an_typ">
+        <option value="arzt">Arzt / Ärztin</option>
+        <option value="krankenhaus">Krankenhaus</option>
+        <option value="apotheke">Apotheke</option>
+        <option value="kostentraeger">Kostenträger</option>
+        <option value="behoerde">Behörde</option>
+        <option value="lieferant">Lieferant</option>
+        <option value="sonstiges">Sonstiges</option>
+      </select></div>
+      <div class="fg"><span class="lbl">Anrede</span><select class="sel" id="an_anrede"><option value="">–</option><option>Herr</option><option>Frau</option><option>Firma</option></select></div>
+      <div class="fg"><span class="lbl">Name 1 / Firma *</span><input class="inp" id="an_name1" placeholder="Nachname oder Firmenname"></div>
+      <div class="fg"><span class="lbl">Name 2 / Vorname</span><input class="inp" id="an_name2" placeholder="Vorname oder Zusatz"></div>
+      <div class="fg"><span class="lbl">Straße</span><input class="inp" id="an_str" placeholder="Straße Nr."></div>
+      <div class="fg"><span class="lbl">PLZ / Ort</span><div style="display:flex;gap:6px"><input class="inp" id="an_plz" placeholder="44XXX" style="width:80px"><input class="inp" id="an_ort" value="Dortmund"></div></div>
+      <div class="fg"><span class="lbl">Telefon 1</span><input class="inp" id="an_tel1" placeholder="0231-…"></div>
+      <div class="fg"><span class="lbl">Telefon 2</span><input class="inp" id="an_tel2"></div>
+      <div class="fg"><span class="lbl">Mobiltelefon</span><input class="inp" id="an_mobil"></div>
+      <div class="fg"><span class="lbl">Telefax</span><input class="inp" id="an_fax"></div>
+      <div class="fg full"><span class="lbl">E-Mail</span><input class="inp" type="email" id="an_email"></div>
+      <div class="fg full"><span class="lbl">Bemerkungen</span><textarea class="txa" id="an_bem" style="min-height:60px"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-adr-neu')">Abbrechen</button><button class="btn btn-primary" onclick="saveAdresse()">Speichern</button></div>
+  </div>
+</div>
 
 <!-- Klient neu -->
 <div class="modal-overlay" id="modal-klient-neu">
@@ -1016,6 +1085,7 @@ if(token){
 // ════════════════════════════════════════
 const pageLoaders = {
   klienten: loadKlienten,
+  adressen: loadAdressen,
   mitarbeiter: loadMA,
   touren: loadTouren,
   dienstplan: loadDienstplan,
@@ -1801,6 +1871,122 @@ async function loadEinstellungen() {
       </tbody></table>`;
     }).catch(()=>{document.getElementById('ktList').innerHTML='<div class="empty">Keine Zugangsberechtigung</div>';});
   } catch(e){showToast('Fehler: '+e.message,'red');}
+}
+
+// ════════════════════════════════════════
+// ALLGEMEINE ADRESSEN
+// ════════════════════════════════════════
+let adrPage = 1;
+let selectedAdr = null;
+
+async function loadAdressen(page) {
+  if(page) adrPage = page;
+  const suche = document.getElementById('adrSearch')?.value || '';
+  const typ = document.getElementById('adrTypFilter')?.value || '';
+  const typIcon = {arzt:'👨‍⚕️', krankenhaus:'🏥', apotheke:'💊', kostentraeger:'🏛', behoerde:'🏢', lieferant:'📦', sonstiges:'📋'};
+  const typBadge = {arzt:'bb-', krankenhaus:'br-', apotheke:'bg-', kostentraeger:'bt-', behoerde:'bp-', lieferant:'bw-', sonstiges:'bgray-'};
+  const list = document.getElementById('adrList');
+  try {
+    const params = new URLSearchParams({page: adrPage, limit: 30});
+    if(suche) params.append('suche', suche);
+    if(typ) params.append('typ', typ);
+    const data = await api('/adressen?' + params);
+    document.getElementById('adrCount').textContent = data.gesamt || 0;
+    if(!data.adressen || data.adressen.length === 0) {
+      list.innerHTML = '<div class="empty">Keine Adressen gefunden</div>';
+      return;
+    }
+    list.innerHTML = data.adressen.map(a => `
+      <div class="list-item${selectedAdr?.id === a.id ? ' active' : ''}" onclick="selectAdresse('${a.id}', this)">
+        <div class="li-av" style="background:var(--blue2);color:var(--blue-t);font-size:16px">${typIcon[a.typ] || '📋'}</div>
+        <div class="li-info">
+          <div class="li-name">${a.name1}${a.name2 ? ', ' + a.name2 : ''}</div>
+          <div class="li-sub">${a.ort || '–'} · ${a.telefon1 || '–'}</div>
+        </div>
+        <span class="badge ${typBadge[a.typ] || 'bgray-'} li-badge" style="font-size:10px">${a.typ || '–'}</span>
+      </div>`).join('');
+    renderPagi('adrPagi', data, 'loadAdressen');
+  } catch(e) {
+    list.innerHTML = `<div class="empty">Fehler: ${e.message}</div>`;
+  }
+}
+
+async function selectAdresse(id, el) {
+  document.querySelectorAll('#adrList .list-item').forEach(i => i.classList.remove('active'));
+  el?.classList.add('active');
+  const detail = document.getElementById('adrDetail');
+  detail.innerHTML = '<div class="loading" style="margin:auto"><div class="spinner"></div> Lade …</div>';
+  try {
+    const data = await api('/adressen/' + id);
+    selectedAdr = data.adresse;
+    const a = data.adresse;
+    const typBadge = {arzt:'bb-', krankenhaus:'br-', apotheke:'bg-', kostentraeger:'bt-', behoerde:'bp-', lieferant:'bw-', sonstiges:'bgray-'};
+    detail.innerHTML = `
+      <div class="detail-header">
+        <div class="detail-toprow">
+          <div class="detail-avatar" style="background:var(--blue2);color:var(--blue-t);font-size:22px">🏢</div>
+          <div class="detail-info">
+            <div class="detail-name">${a.name1}${a.name2 ? ', ' + a.name2 : ''}</div>
+            <div class="detail-meta">
+              <span class="badge ${typBadge[a.typ] || 'bgray-'}">${a.typ || '–'}</span>
+              <span>${a.plz || ''} ${a.ort || ''}</span>
+            </div>
+          </div>
+          <div class="detail-actions">
+            <button class="btn btn-sm btn-primary" onclick="showToast('Bearbeiten …','')">Bearbeiten</button>
+          </div>
+        </div>
+      </div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+        <div class="sec"><div class="sec-header"><span class="sec-title">Stammdaten</span></div><div class="sec-body">
+          <div class="form-grid">
+            <div class="fg"><span class="lbl">Typ</span><input class="inp" readonly value="${a.typ || '–'}"></div>
+            <div class="fg"><span class="lbl">Anrede</span><input class="inp" readonly value="${a.anrede || '–'}"></div>
+            <div class="fg"><span class="lbl">Name 1</span><input class="inp" readonly value="${a.name1 || '–'}"></div>
+            <div class="fg"><span class="lbl">Name 2</span><input class="inp" readonly value="${a.name2 || '–'}"></div>
+            <div class="fg"><span class="lbl">Straße</span><input class="inp" readonly value="${a.strasse || '–'}"></div>
+            <div class="fg"><span class="lbl">PLZ / Ort</span><input class="inp" readonly value="${a.plz || ''} ${a.ort || ''}"></div>
+            <div class="fg"><span class="lbl">Telefon 1</span><input class="inp" readonly value="${a.telefon1 || '–'}"></div>
+            <div class="fg"><span class="lbl">Telefon 2</span><input class="inp" readonly value="${a.telefon2 || '–'}"></div>
+            <div class="fg"><span class="lbl">Mobiltelefon</span><input class="inp" readonly value="${a.mobiltelefon || '–'}"></div>
+            <div class="fg"><span class="lbl">Telefax</span><input class="inp" readonly value="${a.telefax || '–'}"></div>
+            <div class="fg full"><span class="lbl">E-Mail</span><input class="inp" readonly value="${a.email || '–'}"></div>
+          </div>
+        </div></div>
+        ${a.bemerkungen ? `<div class="sec"><div class="sec-header"><span class="sec-title">Bemerkungen</span></div><div class="sec-body">
+          <div style="font-size:12px;color:var(--text2);white-space:pre-line">${a.bemerkungen}</div>
+        </div></div>` : ''}
+      </div>`;
+  } catch(e) {
+    detail.innerHTML = '<div class="empty">Fehler beim Laden</div>';
+  }
+}
+
+async function saveAdresse() {
+  const name1 = document.getElementById('an_name1').value;
+  if(!name1) { showToast('Name 1 ist Pflichtfeld','red'); return; }
+  try {
+    await api('/adressen', {method: 'POST', body: JSON.stringify({
+      typ: document.getElementById('an_typ').value,
+      anrede: document.getElementById('an_anrede').value || null,
+      name1,
+      name2: document.getElementById('an_name2').value || null,
+      strasse: document.getElementById('an_str').value || null,
+      plz: document.getElementById('an_plz').value || null,
+      ort: document.getElementById('an_ort').value || null,
+      telefon1: document.getElementById('an_tel1').value || null,
+      telefon2: document.getElementById('an_tel2').value || null,
+      mobiltelefon: document.getElementById('an_mobil').value || null,
+      telefax: document.getElementById('an_fax').value || null,
+      email: document.getElementById('an_email').value || null,
+      bemerkungen: document.getElementById('an_bem').value || null,
+    })});
+    closeModal('modal-adr-neu');
+    showToast('Adresse gespeichert', 'green');
+    loadAdressen();
+  } catch(e) {
+    showToast('Fehler: ' + e.message, 'red');
+  }
 }
 
 // ════════════════════════════════════════
