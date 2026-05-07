@@ -156,7 +156,7 @@ router.get('/mitarbeiter/:id', async (req, res, next) => {
 
 router.patch('/mitarbeiter/:id', async (req, res, next) => {
   try {
-    const felder=['vorname','nachname','handzeichen','telefon1','telefon2','mobiltelefon','email','qualifikation','beschaeftigung','stunden_woche','ist_pflegekraft','ist_springer','bezirk_id','wg_id','bemerkungen','notizen','status','aktiv'];
+   const felder=['vorname','nachname','handzeichen','telefon1','telefon2','mobiltelefon','telefax','email','qualifikation','beschaeftigung','stunden_woche','ist_pflegekraft','ist_springer','bezirk_id','wg_id','bemerkungen','notizen','status','aktiv','strasse','plz','ort','geburtsdatum','geschlecht','beschaeftigungsnummer','eintrittsdatum','austrittsdatum','austritt_grund','pflegeteam','personal_nr','steuerklasse','anzahl_kinder','steuer_id','krankenkasse','versicherten_nr','sozialversicherung_nr','iban','bic','blz','bank_name','konto_nr','freibetrag','stundenlohn','monatsgehalt','geburtsname','geburtsort','geburtsland','familienstand','nationalitaet','sprache','konfession','externe_id','berufsabschluss','taetigkeit_ambulant','urlaubstage','zeiterfassung_transponder','ki_ueberstunden_vermeiden','startort_ist_adresse','tour_typ','sortierkennzeichen','lobu_ausschluss','stundensatz_woche','stundensatz_sa','stundensatz_so','stundensatz_vfe','stundensatz_fe','stundensatz_nacht'];
     const upd=[],params=[];
     felder.forEach(f=>{if(req.body[f]!==undefined){params.push(req.body[f]);upd.push(`${f}=$${params.length}`);}});
     if(!upd.length) return res.status(400).json({error:'Keine Felder'});
