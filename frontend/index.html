@@ -818,10 +818,10 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             <option value="minijob">Minijob</option><option value="springer">Springer</option><option value="aushilfe">Aushilfe</option>
           </select></div>
           <div class="fg"><span class="lbl">Stunden/Woche</span><input class="inp" type="number" id="ma_std" value="38.5" step="0.5"></div>
-          <div class="fg"><span class="lbl">Beschäftigungsnummer</span><input class="inp" id="ma_beschnr" placeholder="optional"></div>
+          <div class="fg"><span class="lbl">Beschäftigungsnummer</span><select class="sel" id="ma_beschnr"><option value="">– auswählen –</option><option value="999999999">999999999</option><option value="999999998">999999998</option><option value="999999997">999999997</option></select></div>
           <div class="fg full" style="flex-direction:row;gap:12px">
             <label class="chk-row"><input type="checkbox" id="ma_pflegekraft" checked> Pflegekraft</label>
-            <label class="chk-row"><input type="checkbox" id="ma_springer"> Springer</label>
+          
           </div>
         </div>
       </div></div>
@@ -836,9 +836,12 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       </div></div>
       <div class="sec"><div class="sec-header"><span class="sec-title">Zuordnung</span></div><div class="sec-body">
         <div class="form-grid">
-          <div class="fg"><span class="lbl">Bezirk / Station</span><select class="sel" id="ma_bez"><option value="">– auswählen –</option></select></div>
-          <div class="fg"><span class="lbl">Pflegeteam / WG</span><select class="sel" id="ma_wg"><option value="">Kein Team</option></select></div>
+          
+          <div class="fg"><span class="lbl">Pflegeteam / WG</span><select class="sel" id="ma_wg"><option value="">Kein Team</option><option value="verwaltung">Verwaltung</option></select></div>
           <div class="fg"><span class="lbl">Eintrittsdatum</span><input class="inp" type="date" id="ma_eintritt"></div>
+        
+<div class="fg"><span class="lbl">Austrittsdatum</span><input class="inp" type="date" id="ma_austritt"></div>
+<div class="fg full"><span class="lbl">Grund des Austritts</span><input class="inp" id="ma_austritt_grund" placeholder="z.B. Eigenkündigung, Renteneintritt …"></div>
         </div>
       </div></div>
     </div>
@@ -1763,7 +1766,7 @@ function renderMADetail(data) {
                 <option value="vollzeit" ${m.beschaeftigung==='vollzeit'?'selected':''}>Vollzeit</option>
                 <option value="teilzeit" ${m.beschaeftigung==='teilzeit'?'selected':''}>Teilzeit</option>
                 <option value="minijob" ${m.beschaeftigung==='minijob'?'selected':''}>Minijob</option>
-                <option value="springer" ${m.beschaeftigung==='springer'?'selected':''}>Springer</option>
+                
                 <option value="aushilfe" ${m.beschaeftigung==='aushilfe'?'selected':''}>Aushilfe</option>
               </select>
               <span class="lbl">Überw. Tätigkeit ambulant:</span>
@@ -2800,6 +2803,16 @@ async function saveKlient() {
 }
 
 async function saveMA() {
+  const vn = document.getElementById('ma_vn').value.trim();
+  const nn = document.getElementById('ma_nn').value.trim();
+  if(!vn || !nn) {
+    showToast('Bitte Vor- und Nachname eingeben!', 'red');
+    if(!vn) document.getElementById('ma_vn').style.border='2px solid var(--red)';
+    if(!nn) document.getElementById('ma_nn').style.border='2px solid var(--red)';
+    return;
+  }
+  const bestaetigt = confirm(`Mitarbeiter "${vn} ${nn}" wirklich anlegen?`);
+  if(!bestaetigt) return;
   try {
     await api('/mitarbeiter',{method:'POST',body:JSON.stringify({
       vorname:document.getElementById('ma_vn').value,
@@ -2812,16 +2825,18 @@ async function saveMA() {
       stunden_woche:parseFloat(document.getElementById('ma_std').value)||38.5,
       beschaeftigungsnummer:document.getElementById('ma_beschnr').value||null,
       ist_pflegekraft:document.getElementById('ma_pflegekraft').checked,
-      ist_springer:document.getElementById('ma_springer').checked,
+     
       strasse:document.getElementById('ma_str').value,
       plz:document.getElementById('ma_plz').value,
       ort:document.getElementById('ma_ort').value,
       telefon1:document.getElementById('ma_tel1').value,
       mobiltelefon:document.getElementById('ma_mobil').value,
       email:document.getElementById('ma_email').value,
-      bezirk_id:document.getElementById('ma_bez').value||null,
+     
       wg_id:document.getElementById('ma_wg').value||null,
       eintrittsdatum:document.getElementById('ma_eintritt').value||null,
+      austrittsdatum:document.getElementById('ma_austritt').value||null,
+austritt_grund:document.getElementById('ma_austritt_grund').value||null,
     })});
     closeModal('modal-ma-neu');
     showToast('Mitarbeiter angelegt','green');
