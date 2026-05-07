@@ -1449,7 +1449,7 @@ function renderMADetail(data) {
             <input class="inp ma-field" data-field="handzeichen" value="${m.handzeichen||''}" style="text-transform:uppercase;font-weight:600;color:var(--accent-t)">
  
             <span class="lbl">Aktiv:</span>
-            <label class="chk-row"><input type="checkbox" class="ma-field" data-field="aktiv" ${m.aktiv!==false?'checked':''} style="accent-color:var(--accent)"> Aktiv</label>
+            <label class="chk-row"><input type="checkbox" class="ma-field" data-field="aktiv" ${m.aktiv!==false?'checked':''} style="accent-color:var(--accent)" onchange="if(!this.checked){if(!confirm('Mitarbeiter auf inaktiv setzen? Bitte im Reiter Arbeitszeit ein Beschäftigungsende eintragen!'))this.checked=true;}"> Aktiv</label>
  
             <span class="lbl">Nachname:</span>
             <input class="inp ma-field" data-field="nachname" value="${m.nachname||''}">
@@ -1511,11 +1511,7 @@ function renderMADetail(data) {
               <option value="kuechenhilfe" ${m.qualifikation==='kuechenhilfe'?'selected':''}>Küchenhilfe</option>
             </select>
  
-            <span class="lbl">Bezirk:</span>
-            <select class="sel ma-field" data-field="bezirk_id" id="ma_edit_bez">
-              <option value="">– auswählen –</option>
-              ${bezirkeData.map(b=>`<option value="${b.id}" ${m.bezirk_id===b.id?'selected':''}>${b.name}</option>`).join('')}
-            </select>
+           
  
             <span class="lbl">Beschäftigungsnr.:</span>
             <input class="inp ma-field" data-field="beschaeftigungsnummer" value="${m.beschaeftigungsnummer||''}">
@@ -1523,11 +1519,12 @@ function renderMADetail(data) {
             <span class="lbl">Pflegeteam:</span>
             <select class="sel ma-field" data-field="wg_id" id="ma_edit_wg">
               <option value="">Kein Team</option>
+              <option value="verwaltung">Verwaltung</option>
               ${wgsData.map(w=>`<option value="${w.id}" ${m.wg_id===w.id?'selected':''}>${w.name}</option>`).join('')}
             </select>
  
             <span class="lbl" style="align-self:start;padding-top:4px"></span>
-            <label class="chk-row" style="margin-top:4px"><input type="checkbox" class="ma-field" data-field="ist_springer" ${m.ist_springer?'checked':''} style="accent-color:var(--accent)"> Springer</label>
+            
           </div>
         </div></div>
  
@@ -1540,19 +1537,7 @@ function renderMADetail(data) {
             <div style="font-family:var(--mono);font-size:14px;font-weight:600">${m.ma_nummer||'–'}</div>
           </div>
           <div class="sec"><div class="sec-body" style="padding:10px">
-            <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Eintrittsdatum:</div>
-            <input class="inp ma-field" type="date" data-field="eintrittsdatum" value="${m.eintrittsdatum?m.eintrittsdatum.split('T')[0]:''}">
-            <div style="font-size:10px;color:var(--text3);margin:8px 0 4px">Austrittsdatum:</div>
-            <input class="inp ma-field" type="date" data-field="austrittsdatum" value="${m.austrittsdatum?m.austrittsdatum.split('T')[0]:''}">
-            <div style="font-size:10px;color:var(--text3);margin:8px 0 4px">Stunden/Woche:</div>
-            <input class="inp ma-field" type="number" data-field="stunden_woche" value="${m.stunden_woche||38.5}" step="0.5">
-            <div style="font-size:10px;color:var(--text3);margin:8px 0 4px">Status:</div>
-            <select class="sel ma-field" data-field="status">
-              <option value="aktiv" ${(m.status||'aktiv')==='aktiv'?'selected':''}>aktiv</option>
-              <option value="krank" ${m.status==='krank'?'selected':''}>krank</option>
-              <option value="urlaub" ${m.status==='urlaub'?'selected':''}>Urlaub</option>
-              <option value="gekuendigt" ${m.status==='gekuendigt'?'selected':''}>gekündigt</option>
-            </select>
+           
           </div></div>
         </div>
       </div>
