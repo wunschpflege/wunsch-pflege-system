@@ -1397,96 +1397,868 @@ async function selectMA(id, el) {
 
 function renderMADetail(data) {
   const m = data.mitarbeiter;
+ 
   document.getElementById('maDetail').innerHTML = `
-    <div class="detail-header">
-      <div class="detail-toprow">
-        <div class="detail-avatar" style="background:var(--blue2);color:var(--blue-t);font-size:16px">${m.vorname[0]}${m.nachname[0]}</div>
-        <div class="detail-info">
-          <div class="detail-name">${m.nachname}, ${m.vorname}${m.handzeichen?` <span style="font-size:12px;font-weight:400;color:var(--text3);font-family:var(--mono)">(${m.handzeichen})</span>`:''}</div>
-          <div class="detail-meta">
-            <span>${qualLabel(m.qualifikation)}</span>
-            <span style="font-family:var(--mono);font-size:11px">${m.ma_nummer||'–'}</span>
-            <span class="badge ${m.status==='aktiv'?'bg-':m.status==='krank'?'bw-':'br-'}">${m.status||'aktiv'}</span>
-            ${m.ist_springer?'<span class="badge bp-">Springer</span>':''}
-            ${m.ist_pflegekraft?'<span class="badge bt-">Pflegekraft</span>':''}
+    <!-- ── KOPFZEILE wie Medifox ── -->
+    <div style="background:var(--card);border-bottom:1px solid var(--border);padding:10px 16px;display:grid;grid-template-columns:auto 1fr auto auto;gap:16px;align-items:center">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--blue2);color:var(--blue-t);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">${m.vorname[0]}${m.nachname[0]}</div>
+        <div>
+          <div style="font-size:11px;color:var(--text3)">Mitarbeiter:</div>
+          <div style="font-size:13px;font-weight:600">${m.nachname}, ${m.vorname}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:20px;font-size:12px">
+        <div><div style="font-size:10px;color:var(--text3)">Handzeichen:</div><div style="font-weight:600">${m.handzeichen||'–'}</div><div><span class="badge ${m.status==='aktiv'?'bg-':'br-'}" style="font-size:10px">${m.status||'aktiv'}</span></div></div>
+        <div><div style="font-size:10px;color:var(--text3)">Handy:</div><div>${m.mobiltelefon||'–'}</div><div style="font-size:10px;color:var(--text3)">Geb.-Datum: ${m.geburtsdatum?new Date(m.geburtsdatum).toLocaleDateString('de-DE'):'–'}</div></div>
+      </div>
+      <div style="font-size:12px;text-align:right">
+        <div>${m.strasse||'–'}</div>
+        <div>${m.plz||''} ${m.ort||''}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm btn-primary" onclick="maSpeichern('${m.id}')">💾 Speichern</button>
+        <button class="btn btn-sm btn-danger" onclick="showToast('Gespeichert','green')">✕</button>
+      </div>
+    </div>
+ 
+    <!-- ── TABS ── -->
+    <div class="tab-bar" id="maTabs" style="padding:0 16px">
+      <div class="tab active" onclick="switchTab('maTabs','ma-stamm',this)">Stammdaten</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-detail',this)">Detaildaten</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-fortbildung',this)">Fortbildung</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-arbeitszeit',this)">Arbeitszeit</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-lohn',this)">Lohn/Gehalt</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-komm',this)">Kommunikation</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-medien',this)">Medien</div>
+      <div class="tab" onclick="switchTab('maTabs','ma-org',this)">Organisation</div>
+    </div>
+ 
+    <!-- ════════════ TAB: STAMMDATEN ════════════ -->
+    <div id="ma-stamm" class="tab-content active" style="padding:14px;gap:12px">
+ 
+      <!-- Oberer Bereich: Formular + Foto -->
+      <div style="display:grid;grid-template-columns:1fr 220px;gap:14px">
+        <div class="sec"><div class="sec-body">
+          <div style="display:grid;grid-template-columns:140px 1fr 140px 1fr;gap:8px 12px;align-items:center">
+ 
+            <span class="lbl">Handzeichen:</span>
+            <input class="inp ma-field" data-field="handzeichen" value="${m.handzeichen||''}" style="text-transform:uppercase;font-weight:600;color:var(--accent-t)">
+ 
+            <span class="lbl">Aktiv:</span>
+            <label class="chk-row"><input type="checkbox" class="ma-field" data-field="aktiv" ${m.aktiv!==false?'checked':''} style="accent-color:var(--accent)"> Aktiv</label>
+ 
+            <span class="lbl">Nachname:</span>
+            <input class="inp ma-field" data-field="nachname" value="${m.nachname||''}">
+ 
+            <span class="lbl">Pflegekraft:</span>
+            <label class="chk-row"><input type="checkbox" class="ma-field" data-field="ist_pflegekraft" ${m.ist_pflegekraft?'checked':''} style="accent-color:var(--accent)"> Pflegekraft</label>
+ 
+            <span class="lbl">Vorname:</span>
+            <input class="inp ma-field" data-field="vorname" value="${m.vorname||''}">
+ 
+            <span class="lbl">Telefon 1:</span>
+            <input class="inp ma-field" data-field="telefon1" value="${m.telefon1||''}">
+ 
+            <span class="lbl">Straße:</span>
+            <input class="inp ma-field" data-field="strasse" value="${m.strasse||''}">
+ 
+            <span class="lbl">Telefon 2:</span>
+            <input class="inp ma-field" data-field="telefon2" value="${m.telefon2||''}">
+ 
+            <span class="lbl">PLZ / Ort:</span>
+            <div style="display:flex;gap:6px">
+              <input class="inp ma-field" data-field="plz" value="${m.plz||''}" style="width:70px">
+              <input class="inp ma-field" data-field="ort" value="${m.ort||''}">
+            </div>
+ 
+            <span class="lbl">Mobiltelefon:</span>
+            <input class="inp ma-field" data-field="mobiltelefon" value="${m.mobiltelefon||''}">
+ 
+            <span class="lbl">Geschlecht:</span>
+            <select class="sel ma-field" data-field="geschlecht">
+              <option value="">–</option>
+              <option value="maennlich" ${m.geschlecht==='maennlich'?'selected':''}>männlich</option>
+              <option value="weiblich" ${m.geschlecht==='weiblich'?'selected':''}>weiblich</option>
+              <option value="divers" ${m.geschlecht==='divers'?'selected':''}>divers</option>
+            </select>
+ 
+            <span class="lbl">Telefax:</span>
+            <input class="inp ma-field" data-field="telefax" value="${m.telefax||''}">
+ 
+            <span class="lbl">Geburtsdatum:</span>
+            <input class="inp ma-field" type="date" data-field="geburtsdatum" value="${m.geburtsdatum?m.geburtsdatum.split('T')[0]:''}">
+ 
+            <span class="lbl">E-Mail:</span>
+            <input class="inp ma-field" type="email" data-field="email" value="${m.email||''}">
+ 
+            <span class="lbl">Qualifikation:</span>
+            <select class="sel ma-field" data-field="qualifikation">
+              <option value="examiniert_3j" ${m.qualifikation==='examiniert_3j'?'selected':''}>Altenpfleger/in (examiniert)</option>
+              <option value="pflegehelfer" ${m.qualifikation==='pflegehelfer'?'selected':''}>Pflegehelfer/in</option>
+              <option value="hilfskraft" ${m.qualifikation==='hilfskraft'?'selected':''}>Hilfskraft</option>
+              <option value="wundmanager" ${m.qualifikation==='wundmanager'?'selected':''}>Wundmanager/in</option>
+              <option value="palliativ" ${m.qualifikation==='palliativ'?'selected':''}>Palliativpflege</option>
+              <option value="stationsleitung" ${m.qualifikation==='stationsleitung'?'selected':''}>Stationsleitung / Teamleitung</option>
+              <option value="verwaltung" ${m.qualifikation==='verwaltung'?'selected':''}>Verwaltung</option>
+              <option value="auszubildender" ${m.qualifikation==='auszubildender'?'selected':''}>Auszubildende/r</option>
+              <option value="aushilfe" ${m.qualifikation==='aushilfe'?'selected':''}>Aushilfe</option>
+              <option value="apothekenfahrer" ${m.qualifikation==='apothekenfahrer'?'selected':''}>Apothekenfahrer/in</option>
+              <option value="tagespflegefahrer" ${m.qualifikation==='tagespflegefahrer'?'selected':''}>Tagespflegefahrer/in</option>
+              <option value="kuechenhilfe" ${m.qualifikation==='kuechenhilfe'?'selected':''}>Küchenhilfe</option>
+            </select>
+ 
+            <span class="lbl">Bezirk:</span>
+            <select class="sel ma-field" data-field="bezirk_id" id="ma_edit_bez">
+              <option value="">– auswählen –</option>
+              ${bezirkeData.map(b=>`<option value="${b.id}" ${m.bezirk_id===b.id?'selected':''}>${b.name}</option>`).join('')}
+            </select>
+ 
+            <span class="lbl">Beschäftigungsnr.:</span>
+            <input class="inp ma-field" data-field="beschaeftigungsnummer" value="${m.beschaeftigungsnummer||''}">
+ 
+            <span class="lbl">Pflegeteam:</span>
+            <select class="sel ma-field" data-field="wg_id" id="ma_edit_wg">
+              <option value="">Kein Team</option>
+              ${wgsData.map(w=>`<option value="${w.id}" ${m.wg_id===w.id?'selected':''}>${w.name}</option>`).join('')}
+            </select>
+ 
+            <span class="lbl" style="align-self:start;padding-top:4px"></span>
+            <label class="chk-row" style="margin-top:4px"><input type="checkbox" class="ma-field" data-field="ist_springer" ${m.ist_springer?'checked':''} style="accent-color:var(--accent)"> Springer</label>
+          </div>
+        </div></div>
+ 
+        <!-- Foto + MA-Nr -->
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center">
+            <div style="width:100px;height:100px;border-radius:50%;background:var(--blue2);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:600;color:var(--blue-t);border:3px solid var(--border2)">${m.vorname[0]}${m.nachname[0]}</div>
+            <button class="btn btn-sm" style="width:100%;margin-bottom:6px" onclick="showToast('Foto hochladen','')">📷 Foto hochladen</button>
+            <div style="font-size:10px;color:var(--text3)">MA-Nummer:</div>
+            <div style="font-family:var(--mono);font-size:14px;font-weight:600">${m.ma_nummer||'–'}</div>
+          </div>
+          <div class="sec"><div class="sec-body" style="padding:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Eintrittsdatum:</div>
+            <input class="inp ma-field" type="date" data-field="eintrittsdatum" value="${m.eintrittsdatum?m.eintrittsdatum.split('T')[0]:''}">
+            <div style="font-size:10px;color:var(--text3);margin:8px 0 4px">Austrittsdatum:</div>
+            <input class="inp ma-field" type="date" data-field="austrittsdatum" value="${m.austrittsdatum?m.austrittsdatum.split('T')[0]:''}">
+            <div style="font-size:10px;color:var(--text3);margin:8px 0 4px">Stunden/Woche:</div>
+            <input class="inp ma-field" type="number" data-field="stunden_woche" value="${m.stunden_woche||38.5}" step="0.5">
+            <div style="font-size:10px;color:var(--text3);margin:8px 0 4px">Status:</div>
+            <select class="sel ma-field" data-field="status">
+              <option value="aktiv" ${(m.status||'aktiv')==='aktiv'?'selected':''}>aktiv</option>
+              <option value="krank" ${m.status==='krank'?'selected':''}>krank</option>
+              <option value="urlaub" ${m.status==='urlaub'?'selected':''}>Urlaub</option>
+              <option value="gekuendigt" ${m.status==='gekuendigt'?'selected':''}>gekündigt</option>
+            </select>
+          </div></div>
+        </div>
+      </div>
+ 
+      <!-- Vorzugs- und Unerwünschte Klienten -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="sec">
+          <div class="sec-header" style="background:var(--blue2)">
+            <span class="sec-title" style="color:var(--blue-t)">👤 Vorzugsmitarbeiter bei folgenden Klienten</span>
+            <button class="btn btn-sm" onclick="showToast('Klient hinzufügen','')">✏️</button>
+          </div>
+          <div class="sec-body" style="padding:0">
+            <table class="inline-tbl">
+              <thead><tr><th>Klientenname</th><th>Geburtsdatum</th><th>Klienten-Nr.</th></tr></thead>
+              <tbody id="ma-vorzug-tbody">
+                <tr><td colspan="3" style="color:var(--text3);font-size:11px;padding:10px;text-align:center">Keine Einträge</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
-        <div class="detail-actions">
-          <button class="btn btn-sm" onclick="showToast('Stundenkonto','')">Stundenkonto</button>
-          <button class="btn btn-sm" onclick="showToast('Urlaubskonto','')">Urlaub</button>
-          <button class="btn btn-sm btn-primary" onclick="showToast('Bearbeiten','')">Bearbeiten</button>
+        <div class="sec">
+          <div class="sec-header" style="background:var(--red2)">
+            <span class="sec-title" style="color:var(--red-t)">👤 Unerwünscht bei folgenden Klienten</span>
+            <button class="btn btn-sm" onclick="showToast('Klient hinzufügen','')">✏️</button>
+          </div>
+          <div class="sec-body" style="padding:0">
+            <table class="inline-tbl">
+              <thead><tr><th>Klientenname</th><th>Geburtsdatum</th><th>Klienten-Nr.</th></tr></thead>
+              <tbody>
+                <tr><td colspan="3" style="color:var(--text3);font-size:11px;padding:10px;text-align:center">Keine Einträge</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Handys + Fahrzeuge + Bemerkungen -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div class="sec">
+          <div class="sec-header">
+            <span class="sec-title">📱 Handys des Mitarbeiters</span>
+            <button class="btn btn-sm" onclick="maAddGerät('${m.id}')">✏️</button>
+          </div>
+          <div class="sec-body" style="padding:0">
+            <table class="inline-tbl">
+              <thead><tr><th>Geräte-Nr.</th><th>Telefon-Nr.</th></tr></thead>
+              <tbody id="ma-geraete-tbody">
+                ${(data.geraete||[]).length ? (data.geraete||[]).map(g=>`
+                  <tr>
+                    <td><input style="border:none;background:transparent;width:100%;font-size:12px" value="${g.geraete_nr||''}" onchange="showToast('Gespeichert','green')"></td>
+                    <td><input style="border:none;background:transparent;width:100%;font-size:12px" value="${g.telefon_nr||''}" onchange="showToast('Gespeichert','green')"></td>
+                  </tr>`).join('') : '<tr><td colspan="2" style="color:var(--text3);font-size:11px;padding:8px;text-align:center">Keine Geräte</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <div class="sec">
+          <div class="sec-header">
+            <span class="sec-title">🚗 Fahrzeuge des Mitarbeiters</span>
+            <button class="btn btn-sm" onclick="maAddFahrzeug('${m.id}')">✏️</button>
+          </div>
+          <div class="sec-body" style="padding:0">
+            <table class="inline-tbl">
+              <thead><tr><th>Kennzeichen</th><th>Fahrzeugtyp</th></tr></thead>
+              <tbody id="ma-fahrzeuge-tbody">
+                ${(data.fahrzeuge||[]).length ? (data.fahrzeuge||[]).map(f=>`
+                  <tr>
+                    <td><input style="border:none;background:transparent;width:100%;font-size:12px;font-weight:600" value="${f.kennzeichen||''}" onchange="showToast('Gespeichert','green')"></td>
+                    <td><input style="border:none;background:transparent;width:100%;font-size:12px" value="${f.fahrzeugtyp||''}" onchange="showToast('Gespeichert','green')"></td>
+                  </tr>`).join('') : '<tr><td colspan="2" style="color:var(--text3);font-size:11px;padding:8px;text-align:center">Keine Fahrzeuge</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <div class="sec">
+          <div class="sec-header"><span class="sec-title">📝 Bemerkungen</span></div>
+          <div class="sec-body" style="padding:8px">
+            <textarea class="txa ma-field" data-field="bemerkungen" style="min-height:120px;font-size:12px;border:1px solid var(--border);background:var(--bg)">${m.bemerkungen||''}</textarea>
+          </div>
         </div>
       </div>
     </div>
-    <div class="tab-bar" id="maTabs">
-      <div class="tab active" onclick="switchTab('maTabs','ma-stamm',this)">Stammdaten</div>
-      <div class="tab" onclick="switchTab('maTabs','ma-arbeitszeit',this)">Arbeitszeit</div>
-      <div class="tab" onclick="switchTab('maTabs','ma-fahrzeuge',this)">Fahrzeuge</div>
-      <div class="tab" onclick="switchTab('maTabs','ma-geraete',this)">Geräte</div>
-      <div class="tab" onclick="switchTab('maTabs','ma-bemerk',this)">Bemerkungen</div>
+ 
+    <!-- ════════════ TAB: DETAILDATEN ════════════ -->
+    <div id="ma-detail" class="tab-content" style="padding:14px;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="sec"><div class="sec-header"><span class="sec-title">Persönliche Daten</span></div><div class="sec-body">
+          <div style="display:grid;grid-template-columns:160px 1fr;gap:8px 12px;align-items:center">
+            <span class="lbl">Geburtsname:</span>
+            <input class="inp ma-field" data-field="geburtsname" value="${m.geburtsname||''}">
+            <span class="lbl">Geburtsort:</span>
+            <input class="inp ma-field" data-field="geburtsort" value="${m.geburtsort||''}">
+            <span class="lbl">Geburtsland:</span>
+            <input class="inp ma-field" data-field="geburtsland" value="${m.geburtsland||''}">
+            <span class="lbl">Familienstand:</span>
+            <select class="sel ma-field" data-field="familienstand">
+              <option value="">–</option>
+              <option value="ledig" ${m.familienstand==='ledig'?'selected':''}>ledig</option>
+              <option value="verheiratet" ${m.familienstand==='verheiratet'?'selected':''}>verheiratet</option>
+              <option value="geschieden" ${m.familienstand==='geschieden'?'selected':''}>geschieden</option>
+              <option value="verwitwet" ${m.familienstand==='verwitwet'?'selected':''}>verwitwet</option>
+              <option value="eingetragen" ${m.familienstand==='eingetragen'?'selected':''}>eingetragen</option>
+            </select>
+            <span class="lbl">Nationalität:</span>
+            <input class="inp ma-field" data-field="nationalitaet" value="${m.nationalitaet||''}">
+            <span class="lbl">Bev. Sprache:</span>
+            <select class="sel ma-field" data-field="sprache">
+              <option value="deutsch" ${(m.sprache||'deutsch')==='deutsch'?'selected':''}>Deutsch</option>
+              <option value="englisch" ${m.sprache==='englisch'?'selected':''}>Englisch</option>
+              <option value="tuerkisch" ${m.sprache==='tuerkisch'?'selected':''}>Türkisch</option>
+              <option value="arabisch" ${m.sprache==='arabisch'?'selected':''}>Arabisch</option>
+              <option value="russisch" ${m.sprache==='russisch'?'selected':''}>Russisch</option>
+              <option value="polnisch" ${m.sprache==='polnisch'?'selected':''}>Polnisch</option>
+            </select>
+            <span class="lbl">Konfession:</span>
+            <select class="sel ma-field" data-field="konfession">
+              <option value="">–</option>
+              <option value="evangelisch" ${m.konfession==='evangelisch'?'selected':''}>evangelisch</option>
+              <option value="katholisch" ${m.konfession==='katholisch'?'selected':''}>katholisch</option>
+              <option value="islamisch" ${m.konfession==='islamisch'?'selected':''}>islamisch</option>
+              <option value="keine" ${m.konfession==='keine'?'selected':''}>keine</option>
+            </select>
+            <span class="lbl">Externe MA-ID:</span>
+            <input class="inp ma-field" data-field="externe_id" value="${m.externe_id||''}">
+          </div>
+        </div></div>
+ 
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="sec"><div class="sec-header"><span class="sec-title">Individuelle Filter</span><button class="btn btn-sm" onclick="showToast('Filter hinzufügen','')">+</button></div>
+          <div class="sec-body" style="min-height:80px;color:var(--text3);font-size:12px">Keine Filter hinterlegt</div></div>
+ 
+          <div class="sec"><div class="sec-header"><span class="sec-title">Fähigkeiten</span><button class="btn btn-sm" onclick="showToast('Fähigkeit hinzufügen','')">+</button></div>
+          <div class="sec-body">
+            <div style="display:flex;flex-wrap:wrap;gap:6px" id="ma-faehigkeiten">
+              ${(m.faehigkeiten||[]).map(f=>`<span class="badge bgray-" style="cursor:pointer" onclick="showToast('Entfernen?','')">${f}</span>`).join('')}
+              ${!(m.faehigkeiten||[]).length?'<span style="color:var(--text3);font-size:12px">Keine Fähigkeiten hinterlegt</span>':''}
+            </div>
+          </div></div>
+        </div>
+      </div>
+ 
+      <!-- Immunisierungen -->
+      <div class="sec">
+        <div class="sec-header">
+          <span class="sec-title">💉 Immunisierungen</span>
+          <button class="btn btn-sm btn-primary" onclick="maAddImmunisierung()">+ Hinzufügen</button>
+        </div>
+        <div class="sec-body" style="padding:0">
+          <table class="inline-tbl">
+            <thead><tr><th>Datum</th><th>Immunisierung</th><th>Art der Immunisierung</th><th></th></tr></thead>
+            <tbody id="ma-immun-tbody">
+              ${(m.immunisierungen||[]).length ? (m.immunisierungen||[]).map(i=>`
+                <tr>
+                  <td><input style="border:none;background:transparent;width:100px;font-size:12px" type="date" value="${i.datum||''}"></td>
+                  <td><input style="border:none;background:transparent;width:100%;font-size:12px" value="${i.name||''}"></td>
+                  <td><input style="border:none;background:transparent;width:100%;font-size:12px" value="${i.art||''}"></td>
+                  <td><button class="btn btn-sm btn-danger" style="padding:2px 6px" onclick="this.closest('tr').remove()">✕</button></td>
+                </tr>`).join('') : '<tr><td colspan="4" style="color:var(--text3);font-size:11px;padding:10px;text-align:center">Keine Immunisierungen hinterlegt</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    <div id="ma-stamm" class="tab-content active">
-      <div class="sec"><div class="sec-header"><span class="sec-title">Stammdaten</span><button class="btn btn-sm" onclick="showToast('Bearbeiten …','')">Bearbeiten</button></div><div class="sec-body">
-        <div class="form-grid">
-          <div class="fg"><span class="lbl">Handzeichen</span><input class="inp" readonly value="${m.handzeichen||'–'}"></div>
-          <div class="fg"><span class="lbl">MA-Nummer</span><input class="inp" readonly value="${m.ma_nummer||'–'}"></div>
-          <div class="fg"><span class="lbl">Vorname</span><input class="inp" readonly value="${m.vorname}"></div>
-          <div class="fg"><span class="lbl">Nachname</span><input class="inp" readonly value="${m.nachname}"></div>
-          <div class="fg"><span class="lbl">Geburtsdatum</span><input class="inp" readonly value="${m.geburtsdatum?new Date(m.geburtsdatum).toLocaleDateString('de-DE'):'–'}"></div>
-          <div class="fg"><span class="lbl">Geschlecht</span><input class="inp" readonly value="${m.geschlecht||'–'}"></div>
-          <div class="fg"><span class="lbl">Straße</span><input class="inp" readonly value="${m.strasse||'–'}"></div>
-          <div class="fg"><span class="lbl">PLZ / Ort</span><input class="inp" readonly value="${m.plz||''} ${m.ort||''}"></div>
-          <div class="fg"><span class="lbl">Handy</span><input class="inp" readonly value="${m.mobiltelefon||'–'}"></div>
-          <div class="fg"><span class="lbl">Telefon</span><input class="inp" readonly value="${m.telefon1||'–'}"></div>
-          <div class="fg"><span class="lbl">Telefax</span><input class="inp" readonly value="${m.telefax||'–'}"></div>
-          <div class="fg"><span class="lbl">E-Mail</span><input class="inp" readonly value="${m.email||'–'}"></div>
-          <div class="fg"><span class="lbl">Qualifikation</span><input class="inp" readonly value="${qualLabel(m.qualifikation)}"></div>
-          <div class="fg"><span class="lbl">Beschäftigung</span><input class="inp" readonly value="${m.beschaeftigung||'–'}"></div>
-          <div class="fg"><span class="lbl">Stunden / Woche</span><input class="inp" readonly value="${m.stunden_woche||'–'} h"></div>
-          <div class="fg"><span class="lbl">Beschäftigungsnr.</span><input class="inp" readonly value="${m.beschaeftigungsnummer||'–'}"></div>
-          <div class="fg"><span class="lbl">Bezirk</span><input class="inp" readonly value="${m.bezirk||'–'}"></div>
-          <div class="fg"><span class="lbl">Pflegeteam / WG</span><input class="inp" readonly value="${m.pflegeteam||m.wg_name||'–'}"></div>
-          <div class="fg"><span class="lbl">Eintrittsdatum</span><input class="inp" readonly value="${m.eintrittsdatum?new Date(m.eintrittsdatum).toLocaleDateString('de-DE'):'–'}"></div>
-          <div class="fg"><span class="lbl">Aktiv</span><input class="inp" readonly value="${m.aktiv?'Ja':'Nein'}"></div>
-          <div class="fg full" style="flex-direction:row;gap:12px">
-            <label class="chk-row"><input type="checkbox" ${m.aktiv?'checked':''} disabled> Aktiv</label>
-            <label class="chk-row"><input type="checkbox" ${m.ist_pflegekraft?'checked':''} disabled> Pflegekraft</label>
-            <label class="chk-row"><input type="checkbox" ${m.ist_springer?'checked':''} disabled> Springer</label>
+ 
+    <!-- ════════════ TAB: FORTBILDUNG ════════════ -->
+    <div id="ma-fortbildung" class="tab-content" style="padding:14px;gap:12px">
+      <div class="sec">
+        <div class="sec-header">
+          <span class="sec-title">🎓 Fortbildungen</span>
+          <button class="btn btn-sm btn-primary" onclick="maAddFortbildung()">+ Hinzufügen</button>
+        </div>
+        <div class="sec-body" style="padding:0">
+          <table class="inline-tbl">
+            <thead><tr><th>Datum</th><th>Bezeichnung</th><th>Veranstalter</th><th>Dauer (Std.)</th><th>Zertifikat</th><th></th></tr></thead>
+            <tbody id="ma-fortb-tbody">
+              ${(m.fortbildungen||[]).length ? (m.fortbildungen||[]).map(f=>`
+                <tr>
+                  <td><input style="border:none;background:transparent;font-size:12px" type="date" value="${f.datum||''}"></td>
+                  <td><input style="border:none;background:transparent;width:100%;font-size:12px" value="${f.bezeichnung||''}"></td>
+                  <td><input style="border:none;background:transparent;width:100%;font-size:12px" value="${f.veranstalter||''}"></td>
+                  <td><input style="border:none;background:transparent;width:60px;font-size:12px" type="number" value="${f.dauer||''}"></td>
+                  <td><input type="checkbox" ${f.zertifikat?'checked':''}></td>
+                  <td><button class="btn btn-sm btn-danger" style="padding:2px 6px" onclick="this.closest('tr').remove()">✕</button></td>
+                </tr>`).join('') :
+                '<tr><td colspan="6" style="color:var(--text3);font-size:11px;padding:14px;text-align:center">Keine Fortbildungen hinterlegt</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ════════════ TAB: ARBEITSZEIT ════════════ -->
+    <div id="ma-arbeitszeit" class="tab-content" style="padding:14px;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+ 
+        <!-- Links: Beschäftigungsdaten -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="sec"><div class="sec-header"><span class="sec-title">Beschäftigungsdaten</span></div><div class="sec-body">
+            <div style="display:grid;grid-template-columns:180px 1fr;gap:8px 12px;align-items:center">
+              <span class="lbl">Berufsabschluss:</span>
+              <select class="sel ma-field" data-field="berufsabschluss">
+                <option value="">–</option>
+                <option value="examiniert" ${m.berufsabschluss==='examiniert'?'selected':''}>Examinierte Pflegefachkraft</option>
+                <option value="helfer" ${m.berufsabschluss==='helfer'?'selected':''}>Pflegehelfer/in</option>
+                <option value="ohne" ${m.berufsabschluss==='ohne'?'selected':''}>Ohne Abschluss</option>
+              </select>
+              <span class="lbl">Beschäftigungsverhältnis:</span>
+              <select class="sel ma-field" data-field="beschaeftigung">
+                <option value="vollzeit" ${m.beschaeftigung==='vollzeit'?'selected':''}>Vollzeit</option>
+                <option value="teilzeit" ${m.beschaeftigung==='teilzeit'?'selected':''}>Teilzeit</option>
+                <option value="minijob" ${m.beschaeftigung==='minijob'?'selected':''}>Minijob</option>
+                <option value="springer" ${m.beschaeftigung==='springer'?'selected':''}>Springer</option>
+                <option value="aushilfe" ${m.beschaeftigung==='aushilfe'?'selected':''}>Aushilfe</option>
+              </select>
+              <span class="lbl">Überw. Tätigkeit ambulant:</span>
+              <input class="inp ma-field" data-field="taetigkeit_ambulant" value="${m.taetigkeit_ambulant||''}">
+              <span class="lbl">Überw. Tätigkeit stationär:</span>
+              <input class="inp ma-field" data-field="taetigkeit_stationaer" value="${m.taetigkeit_stationaer||''}">
+              <span class="lbl">Mutterschutz von:</span>
+              <div style="display:flex;gap:4px;align-items:center">
+                <input class="inp ma-field" type="date" data-field="mutterschutz_von" value="${m.mutterschutz_von||''}" style="flex:1">
+                <span style="font-size:11px;color:var(--text3)">bis:</span>
+                <input class="inp ma-field" type="date" data-field="mutterschutz_bis" value="${m.mutterschutz_bis||''}" style="flex:1">
+              </div>
+              <span class="lbl">Elternzeit von:</span>
+              <div style="display:flex;gap:4px;align-items:center">
+                <input class="inp ma-field" type="date" data-field="elternzeit_von" value="${m.elternzeit_von||''}" style="flex:1">
+                <span style="font-size:11px;color:var(--text3)">bis:</span>
+                <input class="inp ma-field" type="date" data-field="elternzeit_bis" value="${m.elternzeit_bis||''}" style="flex:1">
+              </div>
+              <span class="lbl">Personal-Nr.:</span>
+              <input class="inp ma-field" data-field="personal_nr" value="${m.personal_nr||m.beschaeftigungsnummer||''}">
+              <span class="lbl" style="grid-column:1/-1">
+                <label class="chk-row"><input type="checkbox" class="ma-field" data-field="zeiterfassung_transponder" ${m.zeiterfassung_transponder?'checked':''}> Elektron. Zeiterfassung mit Transponder</label>
+              </span>
+            </div>
+          </div></div>
+ 
+          <!-- Abwesenheiten -->
+          <div class="sec">
+            <div class="sec-header">
+              <span class="sec-title">Abwesenheiten (${new Date().getFullYear()})</span>
+              <button class="btn btn-sm btn-primary" onclick="maAddAbwesenheit('${m.id}')">+ Hinzufügen</button>
+            </div>
+            <div class="sec-body" style="padding:0;max-height:200px;overflow-y:auto">
+              <table class="inline-tbl">
+                <thead><tr><th>Von</th><th>Bis</th><th>Bezeichnung</th><th>Genehmigt</th></tr></thead>
+                <tbody id="ma-abw-tbody">
+                  ${(data.abwesenheiten||[]).length ? (data.abwesenheiten||[]).map(a=>`
+                    <tr>
+                      <td style="font-family:var(--mono);font-size:11px">${new Date(a.von_datum).toLocaleDateString('de-DE')}</td>
+                      <td style="font-family:var(--mono);font-size:11px">${new Date(a.bis_datum).toLocaleDateString('de-DE')}</td>
+                      <td><span class="badge ${a.typ==='urlaub'?'bw-':a.typ==='krank'?'br-':'bgray-'}">${a.typ}</span></td>
+                      <td>${a.genehmigt?'<span class="badge bg-">✓</span>':'<button class="btn btn-sm" onclick="genehmigAbwesenheit(\''+a.id+'\')">Genehmigen</button>'}</td>
+                    </tr>`).join('') :
+                    '<tr><td colspan="4" style="color:var(--text3);font-size:11px;padding:10px;text-align:center">Keine Abwesenheiten</td></tr>'}
+                </tbody>
+              </table>
+            </div>
+          </div>
+ 
+          <!-- Regelarbeitszeit -->
+          <div class="sec">
+            <div class="sec-header">
+              <span class="sec-title">Regelarbeitszeit</span>
+              <button class="btn btn-sm" onclick="showToast('Regelarbeitszeit bearbeiten','')">✏️</button>
+            </div>
+            <div class="sec-body" style="padding:0;overflow-x:auto">
+              <table class="inline-tbl" style="min-width:600px">
+                <thead><tr><th>Gültig ab</th><th>pro Woche</th><th>Wochen</th><th>Mo.</th><th>Di.</th><th>Mi.</th><th>Do.</th><th>Fr.</th><th>Sa.</th><th>So.</th><th>AT/W</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td style="font-family:var(--mono);font-size:11px">${m.eintrittsdatum?new Date(m.eintrittsdatum).toLocaleDateString('de-DE'):'–'}</td>
+                    <td><input style="border:none;background:transparent;width:50px;font-size:12px;font-weight:600" value="${m.stunden_woche||38.5}"></td>
+                    <td><input style="border:none;background:transparent;width:30px;font-size:12px" value="1"></td>
+                    <td><input style="border:none;background:transparent;width:45px;font-size:12px" value="08:00"></td>
+                    <td><input style="border:none;background:transparent;width:45px;font-size:12px" value="08:00"></td>
+                    <td><input style="border:none;background:transparent;width:45px;font-size:12px" value="08:00"></td>
+                    <td><input style="border:none;background:transparent;width:45px;font-size:12px" value="08:00"></td>
+                    <td><input style="border:none;background:transparent;width:45px;font-size:12px" value="06:30"></td>
+                    <td><input style="border:none;background:transparent;width:45px;font-size:12px" value=""></td>
+                    <td><input style="border:none;background:transparent;width:45px;font-size:12px" value=""></td>
+                    <td><input style="border:none;background:transparent;width:30px;font-size:12px" value="5"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div></div>
+ 
+        <!-- Rechts: Beschäftigungszeiten + Urlaubsanspruch + Rahmendienst -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="sec">
+            <div class="sec-header">
+              <span class="sec-title">Beschäftigungszeiten</span>
+              <button class="btn btn-sm" onclick="showToast('Beschäftigungszeit bearbeiten','')">✏️</button>
+            </div>
+            <div class="sec-body" style="padding:0">
+              <table class="inline-tbl">
+                <thead><tr><th>Von</th><th>Bis</th><th>Filialzuordnung</th><th>Grund Beschäftigungsende</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td style="font-family:var(--mono);font-size:11px">${m.eintrittsdatum?new Date(m.eintrittsdatum).toLocaleDateString('de-DE'):'–'}</td>
+                    <td style="color:var(--text3);font-size:11px">${m.austrittsdatum?new Date(m.austrittsdatum).toLocaleDateString('de-DE'):'offen'}</td>
+                    <td style="font-size:11px">Wunsch-Pflege GmbH</td>
+                    <td style="color:var(--text3);font-size:11px">–</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+ 
+          <div class="sec">
+            <div class="sec-header">
+              <span class="sec-title">Urlaubsanspruch</span>
+              <button class="btn btn-sm" onclick="showToast('Urlaubsanspruch bearbeiten','')">✏️</button>
+            </div>
+            <div class="sec-body" style="padding:0">
+              <table class="inline-tbl">
+                <thead><tr><th>Gültig ab</th><th>Urlaubstage pro Jahr</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><input style="border:none;background:transparent;font-size:12px" type="date" value="${m.eintrittsdatum?m.eintrittsdatum.split('T')[0]:''}"></td>
+                    <td><input style="border:none;background:transparent;width:80px;font-size:12px;font-weight:600" type="number" value="${m.urlaubstage||30}"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+ 
+          <div class="sec">
+            <div class="sec-header">
+              <span class="sec-title">Rahmendienstpläne</span>
+              <button class="btn btn-sm" onclick="showToast('Rahmendienstplan zuordnen','')">✏️</button>
+            </div>
+            <div class="sec-body" style="padding:0">
+              <table class="inline-tbl">
+                <thead><tr><th>Gültig ab</th><th>Bezeichnung</th></tr></thead>
+                <tbody>
+                  ${m.rahmendienstplan ? `<tr><td style="font-family:var(--mono);font-size:11px">${m.rahmendienstplan_ab||'–'}</td><td>${m.rahmendienstplan}</td></tr>` :
+                  '<tr><td colspan="2" style="color:var(--text3);font-size:11px;padding:8px;text-align:center">Kein Rahmendienstplan zugeordnet</td></tr>'}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="ma-arbeitszeit" class="tab-content">
-      <div class="sec"><div class="sec-header"><span class="sec-title">Arbeitszeiten & Abwesenheiten</span></div><div class="sec-body">
-        ${(data.abwesenheiten||[]).length?`<table class="inline-tbl"><thead><tr><th>Typ</th><th>Von</th><th>Bis</th><th>Genehmigt</th></tr></thead><tbody>
-          ${(data.abwesenheiten||[]).map(a=>`<tr><td><span class="badge bw-">${a.typ}</span></td><td>${new Date(a.von_datum).toLocaleDateString('de-DE')}</td><td>${new Date(a.bis_datum).toLocaleDateString('de-DE')}</td><td>${a.genehmigt?'<span class="badge bg-">Ja</span>':'<span class="badge bgray-">Nein</span>'}</td></tr>`).join('')}
-        </tbody></table>`:'<div class="empty">Keine Abwesenheiten</div>'}
-        <div style="margin-top:10px;display:flex;gap:6px">
-          <button class="btn btn-sm btn-primary" onclick="showToast('Krankmeldung erfassen','')">Krankmeldung</button>
-          <button class="btn btn-sm" onclick="showToast('Urlaub beantragen','')">Urlaub eintragen</button>
+ 
+    <!-- ════════════ TAB: LOHN/GEHALT ════════════ -->
+    <div id="ma-lohn" class="tab-content" style="padding:14px;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+ 
+        <!-- Links -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="sec"><div class="sec-header"><span class="sec-title">Kalkulatorischer Stundensatz</span></div><div class="sec-body">
+            <div style="display:grid;grid-template-columns:160px 1fr 60px;gap:8px 8px;align-items:center">
+              <span class="lbl">in der Woche:</span>
+              <input class="inp ma-field" type="number" data-field="stundensatz_woche" value="${m.stundensatz_woche||''}" placeholder="0,00" step="0.01">
+              <span class="lbl" style="font-size:11px">€</span>
+ 
+              <span class="lbl">am Samstag:</span>
+              <input class="inp ma-field" type="number" data-field="stundensatz_sa" value="${m.stundensatz_sa||''}" placeholder="0,00" step="0.01">
+              <span class="lbl" style="font-size:11px">€</span>
+ 
+              <span class="lbl">am Sonntag:</span>
+              <input class="inp ma-field" type="number" data-field="stundensatz_so" value="${m.stundensatz_so||''}" placeholder="0,00" step="0.01">
+              <span class="lbl" style="font-size:11px">€</span>
+ 
+              <span class="lbl">an Vorfeiertagen:</span>
+              <input class="inp ma-field" type="number" data-field="stundensatz_vfe" value="${m.stundensatz_vfe||''}" placeholder="0,00" step="0.01">
+              <span class="lbl" style="font-size:11px">€</span>
+ 
+              <span class="lbl">an Feiertagen:</span>
+              <input class="inp ma-field" type="number" data-field="stundensatz_fe" value="${m.stundensatz_fe||''}" placeholder="0,00" step="0.01">
+              <span class="lbl" style="font-size:11px">€</span>
+ 
+              <span class="lbl">in der Nacht:</span>
+              <input class="inp ma-field" type="number" data-field="stundensatz_nacht" value="${m.stundensatz_nacht||''}" placeholder="0,00" step="0.01">
+              <span class="lbl" style="font-size:11px">€</span>
+            </div>
+          </div></div>
+ 
+          <!-- Lohn/Gehalt Tabelle -->
+          <div class="sec">
+            <div class="sec-header">
+              <span class="sec-title">Lohn / Gehalt</span>
+              <button class="btn btn-sm" onclick="showToast('Lohn hinzufügen','')">✏️</button>
+            </div>
+            <div class="sec-body" style="padding:0">
+              <table class="inline-tbl">
+                <thead><tr><th>Gültig ab</th><th>Stundenlohn €</th><th>Monatsgehalt €</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><input style="border:none;background:transparent;font-size:12px" type="date" value="${m.lohn_ab||m.eintrittsdatum?.split('T')[0]||''}"></td>
+                    <td><input style="border:none;background:transparent;width:80px;font-size:12px;font-family:var(--mono)" type="number" value="${m.stundenlohn||'0.00'}" step="0.01"></td>
+                    <td><input style="border:none;background:transparent;width:80px;font-size:12px;font-family:var(--mono)" type="number" value="${m.monatsgehalt||'0.00'}" step="0.01"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+ 
+          <!-- Lohntarif -->
+          <div class="sec">
+            <div class="sec-header">
+              <span class="sec-title">Lohntarif</span>
+              <button class="btn btn-sm" onclick="showToast('Lohntarif zuordnen','')">✏️</button>
+            </div>
+            <div class="sec-body" style="padding:0">
+              <table class="inline-tbl">
+                <thead><tr><th>Gültig ab</th><th>Lohntarif</th><th>Lohngruppe</th><th>Lohnstufe</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td style="font-family:var(--mono);font-size:11px">${m.eintrittsdatum?new Date(m.eintrittsdatum).toLocaleDateString('de-DE'):'–'}</td>
+                    <td><input style="border:none;background:transparent;font-size:12px" value="${m.lohntarif||'Standard'}"></td>
+                    <td><input style="border:none;background:transparent;width:60px;font-size:12px" value="${m.lohngruppe||''}"></td>
+                    <td><input style="border:none;background:transparent;width:60px;font-size:12px" value="${m.lohnstufe||''}"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+ 
+        <!-- Rechts -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="sec"><div class="sec-header"><span class="sec-title">Krankenkasse / Sozialversicherung</span></div><div class="sec-body">
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:8px 12px;align-items:center">
+              <span class="lbl">Krankenkasse:</span>
+              <input class="inp ma-field" data-field="krankenkasse" value="${m.krankenkasse||''}">
+              <span class="lbl">Versicherten-Nr.:</span>
+              <input class="inp ma-field" data-field="versicherten_nr" value="${m.versicherten_nr||''}">
+              <span class="lbl">Sozialversich.-Nr.:</span>
+              <input class="inp ma-field" data-field="sozialversicherung_nr" value="${m.sozialversicherung_nr||''}">
+            </div>
+          </div></div>
+ 
+          <div class="sec"><div class="sec-header"><span class="sec-title">Angaben zur Lohnbuchhaltung</span></div><div class="sec-body">
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:8px 12px;align-items:center">
+              <span class="lbl">Personal-Nr.:</span>
+              <input class="inp ma-field" data-field="personal_nr" value="${m.personal_nr||m.beschaeftigungsnummer||''}">
+              <span class="lbl">Freibetrag:</span>
+              <div style="display:flex;align-items:center;gap:4px">
+                <input class="inp ma-field" type="number" data-field="freibetrag" value="${m.freibetrag||''}" style="flex:1" step="0.01">
+                <span style="font-size:11px">€</span>
+              </div>
+              <span class="lbl">Steuerklasse:</span>
+              <select class="sel ma-field" data-field="steuerklasse">
+                <option value="">–</option>
+                ${[1,2,3,4,5,6].map(k=>`<option value="${k}" ${m.steuerklasse==k?'selected':''}>${k}</option>`).join('')}
+              </select>
+              <span class="lbl">Anzahl Kinder:</span>
+              <input class="inp ma-field" type="number" data-field="anzahl_kinder" value="${m.anzahl_kinder||0}" step="0.5">
+              <span class="lbl">Steuer-ID-Nr.:</span>
+              <input class="inp ma-field" data-field="steuer_id" value="${m.steuer_id||''}">
+              <span class="lbl" style="grid-column:1/-1">
+                <label class="chk-row"><input type="checkbox" class="ma-field" data-field="lobu_ausschluss" ${m.lobu_ausschluss?'checked':''}> Mitarbeiter aus LoBu-Export ausschließen</label>
+              </span>
+            </div>
+          </div></div>
+ 
+          <div class="sec"><div class="sec-header"><span class="sec-title">Bankverbindung</span></div><div class="sec-body">
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:8px 12px;align-items:center">
+              <span class="lbl">Bank:</span>
+              <input class="inp ma-field" data-field="bank_name" value="${m.bank_name||''}">
+              <span class="lbl">IBAN:</span>
+              <input class="inp ma-field" data-field="iban" value="${m.iban||''}" placeholder="DE00 0000 0000 0000 0000 00">
+              <span class="lbl">BIC:</span>
+              <input class="inp ma-field" data-field="bic" value="${m.bic||''}">
+              <span class="lbl">BLZ:</span>
+              <input class="inp ma-field" data-field="blz" value="${m.blz||''}">
+              <span class="lbl">Konto-Nr.:</span>
+              <input class="inp ma-field" data-field="konto_nr" value="${m.konto_nr||''}">
+            </div>
+          </div></div>
+ 
+          <!-- Kostenstelle -->
+          <div class="sec">
+            <div class="sec-header"><span class="sec-title">Kostenstelle</span><button class="btn btn-sm" onclick="showToast('Kostenstelle bearbeiten','')">✏️</button></div>
+            <div class="sec-body" style="padding:0">
+              <table class="inline-tbl">
+                <thead><tr><th>Gültig ab</th><th>Kostenstellen-Nr.</th><th>Bezeichnung</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><input style="border:none;background:transparent;font-size:12px" type="date" value=""></td>
+                    <td><input style="border:none;background:transparent;font-size:12px" value=""></td>
+                    <td><input style="border:none;background:transparent;width:100%;font-size:12px" value=""></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ════════════ TAB: KOMMUNIKATION ════════════ -->
+    <div id="ma-komm" class="tab-content" style="padding:14px;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="sec"><div class="sec-header"><span class="sec-title">Kontaktdaten</span></div><div class="sec-body">
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px 12px;align-items:center">
+            <span class="lbl">Telefon 1:</span>
+            <input class="inp ma-field" data-field="telefon1" value="${m.telefon1||''}">
+            <span class="lbl">Telefon 2:</span>
+            <input class="inp ma-field" data-field="telefon2" value="${m.telefon2||''}">
+            <span class="lbl">Mobiltelefon:</span>
+            <input class="inp ma-field" data-field="mobiltelefon" value="${m.mobiltelefon||''}">
+            <span class="lbl">Telefax:</span>
+            <input class="inp ma-field" data-field="telefax" value="${m.telefax||''}">
+            <span class="lbl">E-Mail:</span>
+            <input class="inp ma-field" type="email" data-field="email" value="${m.email||''}">
+          </div>
+        </div></div>
+        <div class="sec"><div class="sec-header"><span class="sec-title">Notizen</span></div><div class="sec-body">
+          <textarea class="txa ma-field" data-field="notizen" style="min-height:150px;font-size:12px">${m.notizen||''}</textarea>
+        </div></div>
+      </div>
+    </div>
+ 
+    <!-- ════════════ TAB: MEDIEN ════════════ -->
+    <div id="ma-medien" class="tab-content" style="padding:14px;gap:12px">
+      <div class="sec"><div class="sec-header"><span class="sec-title">Dokumente & Dateien</span><button class="btn btn-sm btn-primary" onclick="showToast('Datei hochladen','')">+ Hochladen</button></div>
+      <div class="sec-body">
+        <div style="border:2px dashed var(--border);border-radius:var(--r2);padding:32px;text-align:center;color:var(--text3)">
+          📎 Dateien hier ablegen oder klicken zum Hochladen<br>
+          <span style="font-size:11px">PDF, JPG, PNG, DOC – max. 10 MB</span>
+        </div>
+        <div id="ma-docs-list" style="margin-top:10px">
+          <div style="color:var(--text3);font-size:12px;text-align:center">Keine Dokumente vorhanden</div>
         </div>
       </div></div>
     </div>
-    <div id="ma-fahrzeuge" class="tab-content">
-      <div class="sec"><div class="sec-header"><span class="sec-title">Fahrzeuge des Mitarbeiters</span><button class="btn btn-sm btn-primary" onclick="showToast('Fahrzeug hinzufügen','')">+ Fahrzeug</button></div><div class="sec-body">
-        ${(data.fahrzeuge||[]).length?`<table class="inline-tbl"><thead><tr><th>Kennzeichen</th><th>Fahrzeugtyp</th></tr></thead><tbody>
-          ${(data.fahrzeuge||[]).map(f=>`<tr><td><strong>${f.kennzeichen||'–'}</strong></td><td>${f.fahrzeugtyp||'–'}</td></tr>`).join('')}
-        </tbody></table>`:'<div class="empty">Keine Fahrzeuge hinterlegt</div>'}
-      </div></div>
-    </div>
-    <div id="ma-geraete" class="tab-content">
-      <div class="sec"><div class="sec-header"><span class="sec-title">Handys & Geräte</span><button class="btn btn-sm btn-primary" onclick="showToast('Gerät hinzufügen','')">+ Gerät</button></div><div class="sec-body">
-        ${(data.geraete||[]).length?`<table class="inline-tbl"><thead><tr><th>Geräte-Nr.</th><th>Telefon-Nr.</th><th>Typ</th></tr></thead><tbody>
-          ${(data.geraete||[]).map(g=>`<tr><td>${g.geraete_nr||'–'}</td><td>${g.telefon_nr||'–'}</td><td>${g.geraetetyp||'–'}</td></tr>`).join('')}
-        </tbody></table>`:'<div class="empty">Keine Geräte hinterlegt</div>'}
-      </div></div>
-    </div>
-    <div id="ma-bemerk" class="tab-content">
-      <div class="sec"><div class="sec-header"><span class="sec-title">Bemerkungen</span><button class="btn btn-sm" onclick="showToast('Bearbeiten','')">Bearbeiten</button></div><div class="sec-body">
-        <div style="font-size:12px;color:var(--text2);white-space:pre-line;min-height:80px">${m.bemerkungen||'Keine Bemerkungen hinterlegt.'}</div>
-      </div></div>
+ 
+    <!-- ════════════ TAB: ORGANISATION ════════════ -->
+    <div id="ma-org" class="tab-content" style="padding:14px;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="sec"><div class="sec-header"><span class="sec-title">Organisationseinheit</span></div><div class="sec-body">
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px 12px;align-items:center">
+            <span class="lbl">Bezirk / Station:</span>
+            <select class="sel ma-field" data-field="bezirk_id">
+              <option value="">– auswählen –</option>
+              ${bezirkeData.map(b=>`<option value="${b.id}" ${m.bezirk_id===b.id?'selected':''}>${b.name}</option>`).join('')}
+            </select>
+            <span class="lbl">Pflegeteam / WG:</span>
+            <select class="sel ma-field" data-field="wg_id">
+              <option value="">Kein Team</option>
+              ${wgsData.map(w=>`<option value="${w.id}" ${m.wg_id===w.id?'selected':''}>${w.name}</option>`).join('')}
+            </select>
+            <span class="lbl">Pflegeteam (Text):</span>
+            <input class="inp ma-field" data-field="pflegeteam" value="${m.pflegeteam||''}">
+            <span class="lbl">Sortierkennzeichen:</span>
+            <input class="inp ma-field" data-field="sortierkennzeichen" value="${m.sortierkennzeichen||''}">
+          </div>
+        </div></div>
+ 
+        <div class="sec"><div class="sec-header"><span class="sec-title">KI-Tourenplanung</span></div><div class="sec-body">
+          <div style="display:grid;grid-template-columns:180px 1fr;gap:8px 12px;align-items:center">
+            <span class="lbl">Übernimmt Touren vom Typ:</span>
+            <select class="sel ma-field" data-field="tour_typ">
+              <option value="">–</option>
+              <option value="ambulant" ${m.tour_typ==='ambulant'?'selected':''}>Ambulant</option>
+              <option value="wg" ${m.tour_typ==='wg'?'selected':''}>WG-Betreuung</option>
+              <option value="beide" ${m.tour_typ==='beide'?'selected':''}>Beide</option>
+            </select>
+            <span class="lbl" style="grid-column:1/-1">
+              <label class="chk-row"><input type="checkbox" class="ma-field" data-field="ki_ueberstunden_vermeiden" ${m.ki_ueberstunden_vermeiden?'checked':''}> Bei der Generierung von Planvorschlägen nach Möglichkeit Überstunden für diesen Mitarbeiter vermeiden</label>
+            </span>
+            <span class="lbl" style="grid-column:1/-1">
+              <label class="chk-row"><input type="checkbox" class="ma-field" data-field="startort_ist_adresse" ${m.startort_ist_adresse?'checked':''}> Startort für Touren ist die Mitarbeiteradresse</label>
+            </span>
+          </div>
+        </div></div>
+      </div>
     </div>
   `;
+ 
+  // Auto-Save bei Änderungen (debounced)
+  let _saveTimer;
+  document.querySelectorAll('#maDetail .ma-field').forEach(el => {
+    el.addEventListener('change', () => {
+      clearTimeout(_saveTimer);
+      _saveTimer = setTimeout(() => maSpeichernAuto(m.id), 1500);
+    });
+    el.addEventListener('input', () => {
+      clearTimeout(_saveTimer);
+      _saveTimer = setTimeout(() => maSpeichernAuto(m.id), 2000);
+    });
+  });
+}
+ 
+// ── Auto-Speichern (leise im Hintergrund) ──
+async function maSpeichernAuto(id) {
+  const felder = sammleMAFelder();
+  if(!felder || Object.keys(felder).length === 0) return;
+  try {
+    await api('/mitarbeiter/' + id, {method: 'PATCH', body: JSON.stringify(felder)});
+    // Leise speichern – kein Toast, nur kleines visuelles Feedback
+    const indikator = document.createElement('div');
+    indikator.style.cssText = 'position:fixed;bottom:60px;right:20px;background:var(--accent);color:#fff;padding:5px 12px;border-radius:6px;font-size:11px;z-index:9999;opacity:0;transition:opacity .3s';
+    indikator.textContent = '✓ Gespeichert';
+    document.body.appendChild(indikator);
+    setTimeout(() => indikator.style.opacity = '1', 10);
+    setTimeout(() => { indikator.style.opacity = '0'; setTimeout(() => indikator.remove(), 300); }, 1500);
+  } catch(e) {
+    showToast('Fehler beim Speichern: ' + e.message, 'red');
+  }
+}
+ 
+// ── Manuell Speichern ──
+async function maSpeichern(id) {
+  const felder = sammleMAFelder();
+  try {
+    await api('/mitarbeiter/' + id, {method: 'PATCH', body: JSON.stringify(felder)});
+    showToast('Mitarbeiter gespeichert ✓', 'green');
+    // Listeneintrag aktualisieren
+    const vn = document.querySelector('[data-field="vorname"]')?.value;
+    const nn = document.querySelector('[data-field="nachname"]')?.value;
+    if(vn && nn) {
+      document.querySelectorAll('#maList .list-item.active .li-name').forEach(el => {
+        el.textContent = nn + ', ' + vn;
+      });
+    }
+  } catch(e) {
+    showToast('Fehler: ' + e.message, 'red');
+  }
+}
+ 
+// ── Felder sammeln ──
+function sammleMAFelder() {
+  const felder = {};
+  document.querySelectorAll('#maDetail .ma-field').forEach(el => {
+    const field = el.dataset.field;
+    if(!field) return;
+    if(el.type === 'checkbox') {
+      felder[field] = el.checked;
+    } else if(el.type === 'number') {
+      felder[field] = el.value !== '' ? parseFloat(el.value) : null;
+    } else {
+      felder[field] = el.value || null;
+    }
+  });
+  return felder;
+}
+ 
+// ── Abwesenheit genehmigen ──
+async function genehmigAbwesenheit(id) {
+  try {
+    await api('/abwesenheiten/' + id + '/genehmigen', {method: 'PATCH'});
+    showToast('Abwesenheit genehmigt', 'green');
+    // Zeile aktualisieren
+    event.target.closest('td').innerHTML = '<span class="badge bg-">✓</span>';
+  } catch(e) {
+    showToast('Fehler: ' + e.message, 'red');
+  }
+}
+ 
+// ── Abwesenheit hinzufügen ──
+async function maAddAbwesenheit(maId) {
+  const von = prompt('Von Datum (JJJJ-MM-TT):');
+  if(!von) return;
+  const bis = prompt('Bis Datum (JJJJ-MM-TT):');
+  if(!bis) return;
+  const typ = prompt('Typ (krank/urlaub/frei/fortbildung/ausgleich):', 'urlaub');
+  if(!typ) return;
+  try {
+    await api('/abwesenheiten', {method: 'POST', body: JSON.stringify({mitarbeiter_id: maId, von_datum: von, bis_datum: bis, typ})});
+    showToast('Abwesenheit eingetragen', 'green');
+    // Detail neu laden
+    selectMA(maId, document.querySelector('#maList .list-item.active'));
+  } catch(e) {
+    showToast('Fehler: ' + e.message, 'red');
+  }
+}
+ 
+// ── Immunisierung hinzufügen ──
+function maAddImmunisierung() {
+  const tbody = document.getElementById('ma-immun-tbody');
+  const emptyRow = tbody.querySelector('td[colspan]');
+  if(emptyRow) emptyRow.closest('tr').remove();
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input style="border:none;background:transparent;width:100px;font-size:12px" type="date" value="${new Date().toISOString().split('T')[0]}"></td>
+    <td><input style="border:none;background:transparent;width:100%;font-size:12px" placeholder="z.B. COVID-19" autofocus></td>
+    <td><input style="border:none;background:transparent;width:100%;font-size:12px" placeholder="z.B. Erstimpfung"></td>
+    <td><button class="btn btn-sm btn-danger" style="padding:2px 6px" onclick="this.closest('tr').remove()">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+  tr.querySelector('input:nth-child(1)').focus();
+}
+ 
+// ── Fortbildung hinzufügen ──
+function maAddFortbildung() {
+  const tbody = document.getElementById('ma-fortb-tbody');
+  const emptyRow = tbody.querySelector('td[colspan]');
+  if(emptyRow) emptyRow.closest('tr').remove();
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input style="border:none;background:transparent;font-size:12px" type="date" value="${new Date().toISOString().split('T')[0]}"></td>
+    <td><input style="border:none;background:transparent;width:100%;font-size:12px" placeholder="Bezeichnung" autofocus></td>
+    <td><input style="border:none;background:transparent;width:100%;font-size:12px" placeholder="Veranstalter"></td>
+    <td><input style="border:none;background:transparent;width:60px;font-size:12px" type="number" placeholder="0"></td>
+    <td><input type="checkbox"></td>
+    <td><button class="btn btn-sm btn-danger" style="padding:2px 6px" onclick="this.closest('tr').remove()">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+  tr.querySelector('input:nth-child(2)').focus();
 }
 
 // ════════════════════════════════════════
